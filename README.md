@@ -9,8 +9,8 @@ My fiancé wanted an alarm clock that simulated a sunrise before ringing.  Since
 # Hardware
  * 3-color LED strip
  * Resistors and transistors
- * DS51307 Real Time Clock
- * Nokia 84x48 pixel LCD screen
+ * DS1307 Real Time Clock
+ * Nokia 5110 84x48 pixel LCD screen
  * Arduino Duemilanove atmega328P
  * 12V power supply
  
