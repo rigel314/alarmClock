@@ -1,5 +1,8 @@
 #include <LCD.h>
 #include <TimerOne.h>
+#include <TimeLib.h>
+#include <DS1307RTC.h>
+#include <Wire.h>
 
 #define BUT_PIN1 A0
 #define BUT_PIN2 A1
@@ -61,11 +64,18 @@ void timer1inter()
 	gotTimer1 = 1;
 }
 
+void print2digits(int number)
+{
+	if (number >= 0 && number < 10)
+		Serial.write('0');
+	Serial.print(number);
+}
+
 void setup()
 {
 	Serial.begin(115200); // For debug (owns pins 0 and 1)
 	
-	Timer1.initialize(100000);
+	Timer1.initialize(1000000);
 	Timer1.attachInterrupt(timer1inter);
 	
 	lcd.initialize();
@@ -87,10 +97,54 @@ void loop()
 	static int prev2Val = 0;
 	int but;
 	
+	static int setctr = 0;
+	
 	if(gotTimer1)
 	{
 		gotTimer1 = 0;
-		// logobj("reading", analogRead(A0));
+		tmElements_t tm;
+		
+		if(RTC.read(tm))
+		{
+			Serial.print("Ok, Time = ");
+			print2digits(tm.Hour);
+			Serial.write(':');
+			print2digits(tm.Minute);
+			Serial.write(':');
+			print2digits(tm.Second);
+			Serial.print(", Date (D/M/Y) = ");
+			Serial.print(tm.Day);
+			Serial.write('/');
+			Serial.print(tm.Month);
+			Serial.write('/');
+			Serial.print(tmYearToCalendar(tm.Year));
+			Serial.println();
+		}
+		else
+		{
+			if(RTC.chipPresent())
+			{
+				Serial.println("The DS1307 is stopped.  Please run the SetTime");
+				Serial.println("example to initialize the time and begin running.");
+				Serial.println();
+				if(setctr == 0)
+				{
+					tm.Year = CalendarYrToTm(2017);
+					tm.Month = 0;
+					tm.Day = 1;
+					tm.Hour = 0;
+					tm.Minute = 0;
+					tm.Second = 0;
+					setctr++;
+					RTC.set(makeTime(tm));
+				}
+			}
+			else
+			{
+				Serial.println("DS1307 read error!  Please check the circuitry.");
+				Serial.println();
+			}
+		}
 	}
 	
 	int but1Val = analogRead(BUT_PIN1);
