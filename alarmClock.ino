@@ -82,6 +82,9 @@ void setup()
 	lcd.sendCommands("\x21\xB0\x20");
 	lcd.sendString(0, 0, "Testing...");
 	
+	setSyncProvider(RTC.get);
+	// setSyncInterval(10);
+	
 	pinMode(BUT_PIN1, INPUT);
 	pinMode(BUT_PIN2, INPUT);
 	
@@ -103,48 +106,22 @@ void loop()
 	{
 		gotTimer1 = 0;
 		tmElements_t tm;
+
+		breakTime(now(), tm);
 		
-		if(RTC.read(tm))
-		{
-			Serial.print("Ok, Time = ");
-			print2digits(tm.Hour);
-			Serial.write(':');
-			print2digits(tm.Minute);
-			Serial.write(':');
-			print2digits(tm.Second);
-			Serial.print(", Date (D/M/Y) = ");
-			Serial.print(tm.Day);
-			Serial.write('/');
-			Serial.print(tm.Month);
-			Serial.write('/');
-			Serial.print(tmYearToCalendar(tm.Year));
-			Serial.println();
-		}
-		else
-		{
-			if(RTC.chipPresent())
-			{
-				Serial.println("The DS1307 is stopped.  Please run the SetTime");
-				Serial.println("example to initialize the time and begin running.");
-				Serial.println();
-				if(setctr == 0)
-				{
-					tm.Year = CalendarYrToTm(2017);
-					tm.Month = 0;
-					tm.Day = 1;
-					tm.Hour = 0;
-					tm.Minute = 0;
-					tm.Second = 0;
-					setctr++;
-					RTC.set(makeTime(tm));
-				}
-			}
-			else
-			{
-				Serial.println("DS1307 read error!  Please check the circuitry.");
-				Serial.println();
-			}
-		}
+		Serial.print("Ok, Time = ");
+		print2digits(tm.Hour);
+		Serial.write(':');
+		print2digits(tm.Minute);
+		Serial.write(':');
+		print2digits(tm.Second);
+		Serial.print(", Date (D/M/Y) = ");
+		Serial.print(tm.Day);
+		Serial.write('/');
+		Serial.print(tm.Month);
+		Serial.write('/');
+		Serial.print(tmYearToCalendar(tm.Year));
+		Serial.println();
 	}
 	
 	int but1Val = analogRead(BUT_PIN1);
@@ -178,6 +155,8 @@ void loop()
 		analogWrite(RED_PIN, 1);
 		analogWrite(GRN_PIN, 1);
 		analogWrite(BLU_PIN, 1);
+		RTC.set(SECS_YR_2000);
+		setTime(SECS_YR_2000);
 	}
 	else if(but == 2 && but != prevBut)
 	{
@@ -203,9 +182,7 @@ void loop()
 	else if(but == 5 && but != prevBut)
 	{
 		logwobj("B5", but2Val);
-		analogWrite(RED_PIN, 255);
-		analogWrite(GRN_PIN, 255);
-		analogWrite(BLU_PIN, 255);
+		analogWrite(SCRN_LED_PIN, 64);
 	}
 	else if(but == 0 && but != prevBut)
 	{
