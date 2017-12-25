@@ -214,7 +214,7 @@ void loop()
 			Wire.write(val >> 8 & 0x07);
 			Wire.write(val & 0xFF);
 			Wire.endTransmission(true);
-			delayMicroseconds(15);
+			delayMicroseconds(15); // To get almost exactly 8000 samples/sec, which is what the sound was resampled to
 		}
 		// Wire.endTransmission(true);
 	}
