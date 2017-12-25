@@ -2,3 +2,8 @@
 *.s\#*
 *.net
 *.simcfg
+*.ger
+*.gpi
+*.dri
+*.xln
+eagle/*.zip

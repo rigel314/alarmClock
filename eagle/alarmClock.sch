@@ -2924,15 +2924,15 @@ http://www.ladyada.net/library/pcb/eaglelibrary.html</description>
 </class>
 </classes>
 <parts>
-<part name="R1" library="eagle-ltspice" library_urn="urn:adsk.eagle:library:217" deviceset="R" device="0204/7" package3d_urn="urn:adsk.eagle:package:13274/1"/>
-<part name="R2" library="eagle-ltspice" library_urn="urn:adsk.eagle:library:217" deviceset="R" device="0204/7" package3d_urn="urn:adsk.eagle:package:13274/1"/>
-<part name="R3" library="eagle-ltspice" library_urn="urn:adsk.eagle:library:217" deviceset="R" device="0204/7" package3d_urn="urn:adsk.eagle:package:13274/1"/>
-<part name="R5" library="eagle-ltspice" library_urn="urn:adsk.eagle:library:217" deviceset="R" device="0204/7" package3d_urn="urn:adsk.eagle:package:13274/1"/>
-<part name="R4" library="eagle-ltspice" library_urn="urn:adsk.eagle:library:217" deviceset="R" device="0204/7" package3d_urn="urn:adsk.eagle:package:13274/1"/>
-<part name="R6" library="eagle-ltspice" library_urn="urn:adsk.eagle:library:217" deviceset="R" device="0204/7" package3d_urn="urn:adsk.eagle:package:13274/1"/>
-<part name="R7" library="eagle-ltspice" library_urn="urn:adsk.eagle:library:217" deviceset="R" device="0204/7" package3d_urn="urn:adsk.eagle:package:13274/1"/>
-<part name="R8" library="eagle-ltspice" library_urn="urn:adsk.eagle:library:217" deviceset="R" device="0204/7" package3d_urn="urn:adsk.eagle:package:13274/1"/>
-<part name="R9" library="eagle-ltspice" library_urn="urn:adsk.eagle:library:217" deviceset="R" device="0204/7" package3d_urn="urn:adsk.eagle:package:13274/1"/>
+<part name="R1" library="eagle-ltspice" library_urn="urn:adsk.eagle:library:217" deviceset="R" device="0204/7" package3d_urn="urn:adsk.eagle:package:13274/1" value="10k"/>
+<part name="R2" library="eagle-ltspice" library_urn="urn:adsk.eagle:library:217" deviceset="R" device="0204/7" package3d_urn="urn:adsk.eagle:package:13274/1" value="10k"/>
+<part name="R3" library="eagle-ltspice" library_urn="urn:adsk.eagle:library:217" deviceset="R" device="0204/7" package3d_urn="urn:adsk.eagle:package:13274/1" value="10k"/>
+<part name="R5" library="eagle-ltspice" library_urn="urn:adsk.eagle:library:217" deviceset="R" device="0204/7" package3d_urn="urn:adsk.eagle:package:13274/1" value="10k"/>
+<part name="R4" library="eagle-ltspice" library_urn="urn:adsk.eagle:library:217" deviceset="R" device="0204/7" package3d_urn="urn:adsk.eagle:package:13274/1" value="10k"/>
+<part name="R6" library="eagle-ltspice" library_urn="urn:adsk.eagle:library:217" deviceset="R" device="0204/7" package3d_urn="urn:adsk.eagle:package:13274/1" value="1k"/>
+<part name="R7" library="eagle-ltspice" library_urn="urn:adsk.eagle:library:217" deviceset="R" device="0204/7" package3d_urn="urn:adsk.eagle:package:13274/1" value="1k"/>
+<part name="R8" library="eagle-ltspice" library_urn="urn:adsk.eagle:library:217" deviceset="R" device="0204/7" package3d_urn="urn:adsk.eagle:package:13274/1" value="1k"/>
+<part name="R9" library="eagle-ltspice" library_urn="urn:adsk.eagle:library:217" deviceset="R" device="0204/7" package3d_urn="urn:adsk.eagle:package:13274/1" value="47"/>
 <part name="T1" library="transistor" library_urn="urn:adsk.eagle:library:402" deviceset="2SC1306" device="" package3d_urn="urn:adsk.eagle:package:29940/2"/>
 <part name="T2" library="transistor" library_urn="urn:adsk.eagle:library:402" deviceset="2SC1306" device="" package3d_urn="urn:adsk.eagle:package:29940/2"/>
 <part name="T3" library="transistor" library_urn="urn:adsk.eagle:library:402" deviceset="2SC1306" device="" package3d_urn="urn:adsk.eagle:package:29940/2"/>
@@ -2958,6 +2958,7 @@ http://www.ladyada.net/library/pcb/eaglelibrary.html</description>
 <part name="X_10" library="ngspice-simulation" library_urn="urn:adsk.eagle:library:527439" deviceset="GND" device=""/>
 <part name="U$1" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="ARDUINO" device="UNO"/>
 <part name="X_11" library="ngspice-simulation" library_urn="urn:adsk.eagle:library:527439" deviceset="GND" device=""/>
+<part name="R10" library="eagle-ltspice" library_urn="urn:adsk.eagle:library:217" deviceset="R" device="0204/7" package3d_urn="urn:adsk.eagle:package:13274/1" value="147"/>
 </parts>
 <sheets>
 <sheet>
@@ -2993,11 +2994,12 @@ http://www.ladyada.net/library/pcb/eaglelibrary.html</description>
 <instance part="LED" gate="A" x="71.12" y="48.26"/>
 <instance part="X_7" gate="G$1" x="269.24" y="-2.54"/>
 <instance part="X_8" gate="G$1" x="127" y="-10.16"/>
-<instance part="SPKR" gate="G$1" x="20.32" y="68.58"/>
-<instance part="X_9" gate="G$1" x="30.48" y="63.5"/>
+<instance part="SPKR" gate="G$1" x="60.96" y="76.2"/>
+<instance part="X_9" gate="G$1" x="71.12" y="71.12"/>
 <instance part="X_10" gate="G$1" x="7.62" y="83.82"/>
 <instance part="U$1" gate="G$1" x="228.6" y="0" rot="R90"/>
 <instance part="X_11" gate="G$1" x="200.66" y="-30.48"/>
+<instance part="R10" gate="G$1" x="43.18" y="78.74"/>
 </instances>
 <busses>
 </busses>
@@ -3067,9 +3069,9 @@ http://www.ladyada.net/library/pcb/eaglelibrary.html</description>
 </segment>
 <segment>
 <pinref part="SPKR" gate="G$1" pin="2"/>
-<wire x1="17.78" y1="68.58" x2="30.48" y2="68.58" width="0.1524" layer="91"/>
+<wire x1="58.42" y1="76.2" x2="71.12" y2="76.2" width="0.1524" layer="91"/>
 <pinref part="X_9" gate="G$1" pin="0"/>
-<wire x1="30.48" y1="68.58" x2="30.48" y2="63.5" width="0.1524" layer="91"/>
+<wire x1="71.12" y1="76.2" x2="71.12" y2="71.12" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="U$1" gate="G$1" pin="GND2"/>
@@ -3314,11 +3316,9 @@ http://www.ladyada.net/library/pcb/eaglelibrary.html</description>
 </net>
 <net name="N$29" class="0">
 <segment>
-<pinref part="DAC" gate="A" pin="6"/>
-<wire x1="17.78" y1="83.82" x2="25.4" y2="83.82" width="0.1524" layer="91"/>
-<wire x1="25.4" y1="83.82" x2="25.4" y2="71.12" width="0.1524" layer="91"/>
 <pinref part="SPKR" gate="G$1" pin="1"/>
-<wire x1="25.4" y1="71.12" x2="17.78" y2="71.12" width="0.1524" layer="91"/>
+<pinref part="R10" gate="G$1" pin="2"/>
+<wire x1="48.26" y1="78.74" x2="58.42" y2="78.74" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$23" class="0">
@@ -3387,6 +3387,15 @@ http://www.ladyada.net/library/pcb/eaglelibrary.html</description>
 <wire x1="17.78" y1="88.9" x2="48.26" y2="88.9" width="0.1524" layer="91"/>
 </segment>
 </net>
+<net name="N$12" class="0">
+<segment>
+<wire x1="30.48" y1="83.82" x2="30.48" y2="78.74" width="0.1524" layer="91"/>
+<pinref part="R10" gate="G$1" pin="1"/>
+<wire x1="30.48" y1="78.74" x2="38.1" y2="78.74" width="0.1524" layer="91"/>
+<pinref part="DAC" gate="A" pin="6"/>
+<wire x1="17.78" y1="83.82" x2="30.48" y2="83.82" width="0.1524" layer="91"/>
+</segment>
+</net>
 </nets>
 </sheet>
 </sheets>
@@ -3397,20 +3406,11 @@ http://www.ladyada.net/library/pcb/eaglelibrary.html</description>
 <approved hash="104,1,261.62,10.16,U$1,GND2,0,,,"/>
 <approved hash="104,1,261.62,7.62,U$1,5V,N$11,,,"/>
 <approved hash="104,1,261.62,5.08,U$1,3V,N$27,,,"/>
-<approved hash="113,1,128.45,71.12,R1,,,,,"/>
-<approved hash="113,1,128.45,53.34,R2,,,,,"/>
-<approved hash="113,1,128.45,35.56,R3,,,,,"/>
-<approved hash="113,1,97.9703,53.34,R5,,,,,"/>
-<approved hash="113,1,97.9703,71.12,R4,,,,,"/>
-<approved hash="113,1,27.94,59.5097,R6,,,,,"/>
-<approved hash="113,1,27.94,36.6497,R7,,,,,"/>
-<approved hash="113,1,27.94,16.3297,R8,,,,,"/>
-<approved hash="113,1,172.72,-21.7703,R9,,,,,"/>
 <approved hash="113,1,81.5171,92.9361,RTC,,,,,"/>
 <approved hash="113,1,18.0171,91.6661,DAC,,,,,"/>
 <approved hash="113,1,147.557,-12.4739,SCRN,,,,,"/>
 <approved hash="113,1,68.8171,51.0261,LED,,,,,"/>
-<approved hash="113,1,18.0171,71.3461,SPKR,,,,,"/>
+<approved hash="113,1,58.6571,78.9661,SPKR,,,,,"/>
 </errors>
 </schematic>
 </drawing>
