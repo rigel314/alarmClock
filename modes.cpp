@@ -3,7 +3,7 @@
 
 #include "modes.h"
 
-enum mode modeMux(enum mode mode, enum but* butp)
+inline enum mode modeMux(enum mode mode, enum but* butp)
 {
 	// if(but != but_NONE)
 	// 	logwobj("button", but);
@@ -107,11 +107,11 @@ enum mode demomode(enum mode mode, enum but* butp)
 		for(int i = 0; i < 16000; i++)
 		{
 			Wire.beginTransmission(MCP4726_ADDR);
-			int16_t val = pgm_read_byte(ptr++);
+			int16_t val = (int8_t)pgm_read_byte(ptr++);
 			val += 128;
 			val <<= 3;
 			// logobj(val);
-			Wire.write(val >> 8 & 0x07);
+			Wire.write(val >> 8);// & 0x07);
 			Wire.write(val & 0xFF);
 			Wire.endTransmission(true);
 			delayMicroseconds(15);
