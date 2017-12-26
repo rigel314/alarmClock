@@ -5,64 +5,17 @@
 #include <Wire.h>
 #include <avr/pgmspace.h>
 
-#define BUT_PIN1 A0
-#define BUT_PIN2 A1
+#include "common.h"
+#include "modes.h"
 
-#define RED_PIN 11
-#define GRN_PIN 5
-#define BLU_PIN 3
+volatile unsigned char gotTimer1 = 0;
 
-#define SCRN_SCLK_PIN 7
-#define SCRN_MOSI_PIN 8
-#define SCRN_DC_PIN 9
-#define SCRN_RST_PIN 10
-#define SCRN_SCE_PIN 12
-#define SCRN_LED_PIN 6 // PWM
-
-#define MCP4726_ADDR 0x62
-
-#define DEBUG // for now
-
-#ifdef DEBUG
-#define _FILENAME_ "alarmClock.ino"
-#define _XSTRINGIFY(x) #x
-#define STRINGIFY(x) _XSTRINGIFY(x)
-#define log(msg) \
-					do \
-					{ \
-						Serial.print(_FILENAME_ ":" STRINGIFY(__LINE__) " in `"); \
-						Serial.print(__PRETTY_FUNCTION__); \
-						Serial.println("`, " msg); \
-					} \
-					while(0)
-					
-#define logobj(obj) \
-					do \
-					{ \
-						Serial.println(obj); \
-					} \
-					while(0)
-					
-#define logwobj(msg, obj) \
-					do \
-					{ \
-						log(msg); \
-						logobj(obj); \
-					} \
-					while(0)
-#else
-#define log(msg)
-#define logobj(obj)
-#define logwobj(msg, obj)
-#endif // DEBUG
-
-#define histequal(a, b, hist) (a > b-hist && a < b+hist)
-
-volatile int gotTimer1 = 0;
 LCD lcd(SCRN_SCLK_PIN, SCRN_MOSI_PIN, SCRN_DC_PIN, SCRN_RST_PIN, SCRN_SCE_PIN);
 
 const char sound[] PROGMEM =
 #include "bird.h" // This has the data and a semicolon
+
+static char const lookup[] = "0123456789ABCDEF";
 
 // Called via timer interrupt
 void timer1inter()
@@ -70,30 +23,21 @@ void timer1inter()
 	gotTimer1 = 1;
 }
 
-void print2digits(int number)
-{
-	if (number >= 0 && number < 10)
-		Serial.write('0');
-	Serial.print(number);
-}
-
 void setup()
 {
 	Serial.begin(115200); // For debug (owns pins 0 and 1)
+	
+	// TWBR = ((F_CPU / 400000L) - 16) / 2; // Set I2C frequency to 400kHz
+	Wire.setClock(400000L);
 	
 	Timer1.initialize(1000000);
 	Timer1.attachInterrupt(timer1inter);
 	
 	lcd.initialize();
-	lcd.sendCommands("\x21\xB0\x20");
-	lcd.sendString(0, 0, "Testing...");
+	lcd.sendCommands("\x21\xA8\x20");
 	
 	setSyncProvider(RTC.get);
-	setTime(RTC.get());
 	// setSyncInterval(10);
-	
-	// TWBR = ((F_CPU / 400000L) - 16) / 2; // Set I2C frequency to 400kHz
-	Wire.setClock(400000L);
 	
 	pinMode(BUT_PIN1, INPUT);
 	pinMode(BUT_PIN2, INPUT);
@@ -105,18 +49,16 @@ void setup()
 
 void loop()
 {
-	static int prevBut = 0;
+	static enum but prevBut = but_NONE;
 	static int prev1Val = 0;
 	static int prev2Val = 0;
-	static int backlight = 0;
-	int but;
+	static char backlight = 0;
+	static enum mode mode = mode_BOOT;
+	static char longPress = 0;
+	static int longCount = 0;
+	enum but but, realbut;
 	
-	volatile char blar = sound[0];
-	if(blar)
-	{
-		log("WTF");
-	}
-	
+	// Handle interrupt
 	if(gotTimer1)
 	{
 		gotTimer1 = 0;
@@ -124,38 +66,34 @@ void loop()
 		
 		breakTime(now(), tm);
 		
-		// Serial.print("Ok, Time = ");
-		// print2digits(tm.Hour);
-		// Serial.write(':');
-		// print2digits(tm.Minute);
-		// Serial.write(':');
-		// print2digits(tm.Second);
-		// Serial.print(", Date (D/M/Y) = ");
-		// Serial.print(tm.Day);
-		// Serial.write('/');
-		// Serial.print(tm.Month);
-		// Serial.write('/');
-		// Serial.print(tmYearToCalendar(tm.Year));
-		// Serial.println();
+		char timestr[] = "now - 15:37   ";
+		
+		timestr[6] = lookup[tm.Hour/10];
+		timestr[7] = lookup[tm.Hour%10];
+		timestr[9] = lookup[tm.Minute/10];
+		timestr[10] = lookup[tm.Minute%10];
+		
+		lcd.sendString(0, 0, timestr);
 	}
 	
+	// Figure out which button is pressed
 	int but1Val = analogRead(BUT_PIN1);
 	int but2Val = analogRead(BUT_PIN2);
 	
 	if(histequal(but1Val, prev1Val, 10) && histequal(but2Val, prev2Val, 10))
 	{
 		if(histequal(but1Val, 1024, 20) && histequal(but2Val, 1024, 20))
-			but = 0;
+			but = but_NONE;
 		else if(histequal(but1Val, 0, 70))
-			but = 1;
+			but = but_LEFT;
 		else if(histequal(but1Val, 512, 70))
-			but = 2;
+			but = but_RIGHT;
 		else if(histequal(but1Val, 682, 70))
-			but = 3;
+			but = but_UP;
 		else if(histequal(but2Val, 0, 70))
-			but = 4;
+			but = but_DOWN;
 		else if(histequal(but2Val, 512, 70))
-			but = 5;
+			but = but_SELECT;
 		else
 			but = prevBut;
 	}
@@ -164,70 +102,42 @@ void loop()
 		but = prevBut;
 	}
 	
-	if(but == 1 && but != prevBut)
+	// Don't send a button event unless a button has been released
+	realbut = but_NONE;
+	if(but == but_NONE && prevBut != but_NONE) // button released
 	{
-		logwobj("B1", but1Val);
-		analogWrite(RED_PIN, 1);
-		analogWrite(GRN_PIN, 1);
-		analogWrite(BLU_PIN, 1);
-		RTC.set(SECS_YR_2000);
-		setTime(SECS_YR_2000);
+		if(longPress) // Also don't send one if longpress was sent
+			longPress = 0;
+		else
+			realbut = prevBut;
+		longCount = 0;
 	}
-	else if(but == 2 && but != prevBut)
+	
+	if(but != but_NONE && longCount == 5000 && !longPress)
 	{
-		logwobj("B2", but1Val);
-		analogWrite(RED_PIN, 32);
-		analogWrite(GRN_PIN, 32);
-		analogWrite(BLU_PIN, 32);
+		longPress = 1;
+		realbut = (enum but)(but + 5);
 	}
-	else if(but == 3 && but != prevBut)
+	if(but != but_NONE)
 	{
-		logwobj("B3", but1Val);
-		analogWrite(RED_PIN, 64);
-		analogWrite(GRN_PIN, 64);
-		analogWrite(BLU_PIN, 64);
-		for(int i = 0; i < 4096; i++)
-		{
-			Wire.beginTransmission(MCP4726_ADDR);
-			// logobj(val);
-			Wire.write(i >> 8 & 0xFF);
-			Wire.write(i & 0xFF);
-			Wire.endTransmission(true);
-			delay(1);
-		}
+		longCount++;
 	}
-	else if(but == 4 && but != prevBut)
+	
+	// handle buttons globally
+	if(realbut == but_SELECT_LONG)
 	{
-		logwobj("B4", but2Val);
-		analogWrite(RED_PIN, 128);
-		analogWrite(GRN_PIN, 128);
-		analogWrite(BLU_PIN, 128);
-		
-		const char* ptr = sound;
-		for(int i = 0; i < 16000; i++)
-		{
-			Wire.beginTransmission(MCP4726_ADDR);
-			int16_t val = pgm_read_byte(ptr++);
-			val += 128;
-			val <<= 3;
-			// logobj(val);
-			Wire.write(val >> 8 & 0x07);
-			Wire.write(val & 0xFF);
-			Wire.endTransmission(true);
-			delayMicroseconds(15); // To get almost exactly 8000 samples/sec, which is what the sound was resampled to
-		}
-		// Wire.endTransmission(true);
-	}
-	else if(but == 5 && but != prevBut)
-	{
-		logwobj("B5", but2Val);
+		// logwobj("B5", but2Val);
 		backlight = !backlight;
 		analogWrite(SCRN_LED_PIN, (backlight) ? 2 : 0);
 	}
-	else if(but == 0 && but != prevBut)
+	
+	if(realbut != but_SELECT_LONG)
 	{
-		logwobj("no buttons", but1Val);
-		logobj(but2Val);
+		mode = modeMux(mode, realbut);
+	}
+	else
+	{
+		mode = modeMux(mode, but_NONE);
 	}
 	
 	prevBut = but;
