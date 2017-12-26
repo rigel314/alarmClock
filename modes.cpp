@@ -3,7 +3,7 @@
 
 #include "modes.h"
 
-enum mode modeMux(enum mode mode, enum but but)
+enum mode modeMux(enum mode mode, enum but* butp)
 {
 	// if(but != but_NONE)
 	// 	logwobj("button", but);
@@ -11,51 +11,50 @@ enum mode modeMux(enum mode mode, enum but but)
 	switch(mode)
 	{
 		case mode_NORMAL:
-			mode = normmode(mode, but);
+			mode = normmode(mode, butp);
 			break;
 		case mode_SETTIME:
-			mode = normmode(mode, but);
+			mode = stimemode(mode, butp);
 			break;
 		case mode_SETALARM:
-			mode = normmode(mode, but);
+			mode = salrmmode(mode, butp);
 			break;
 		case mode_DEMO:
-			mode = demomode(mode, but);
+			mode = demomode(mode, butp);
 			break;
 		default:
 			break;
 	}
 	
-	if(mode == mode_NMODES)
-	{
-		mode = mode_NORMAL;
-	}
-	if(mode == mode_INVALID)
-	{
-		mode = mode_DEMO;
-	}
-	
 	return mode;
 }
 
-enum mode normmode(enum mode mode, enum but but)
+enum mode normmode(enum mode mode, enum but* butp)
 {
-	if(but == but_LEFT)
-		mode = (enum mode)(mode - 1);
-	if(but == but_RIGHT)
-		mode = (enum mode)(mode + 1);
-	
+	(void) butp;
 	return mode;
 }
 
-enum mode demomode(enum mode mode, enum but but)
+enum mode stimemode(enum mode mode, enum but* butp)
 {
-	if(but == but_LEFT)
-		mode = (enum mode)(mode - 1);
-	if(but == but_RIGHT)
-		mode = (enum mode)(mode + 1);
+	(void) butp;
+	return mode;
+}
+
+enum mode salrmmode(enum mode mode, enum but* butp)
+{
+	(void) butp;
+	return mode;
+}
+
+enum mode demomode(enum mode mode, enum but* butp)
+{
+	enum but but = *butp;
+	
 	if(but == but_UP)
 	{
+		*butp = but_NONE;
+		
 		unsigned char r = 0;
 		unsigned char g = 0;
 		unsigned char b = 0;
@@ -100,6 +99,8 @@ enum mode demomode(enum mode mode, enum but but)
 	}
 	if(but == but_DOWN)
 	{
+		*butp = but_NONE;
+		
 		lcd.sendString(4, 0, "running demo2 ");
 		
 		const char* ptr = sound;

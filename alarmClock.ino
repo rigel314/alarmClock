@@ -147,11 +147,27 @@ void loop()
 	
 	if(realbut != but_SELECT_LONG)
 	{
-		mode = modeMux(mode, realbut);
+		mode = modeMux(mode, &realbut);
 	}
 	else
 	{
-		mode = modeMux(mode, but_NONE);
+		enum but tmp = but_NONE;
+		mode = modeMux(mode, &tmp);
+	}
+	
+	// default actions for buttons
+	if(realbut == but_LEFT)
+		mode = (enum mode)(mode - 1);
+	if(realbut == but_RIGHT)
+		mode = (enum mode)(mode + 1);
+	
+	if(mode == mode_NMODES)
+	{
+		mode = mode_NORMAL;
+	}
+	if(mode == mode_INVALID)
+	{
+		mode = mode_DEMO;
 	}
 	
 	if(mode != modebak)
