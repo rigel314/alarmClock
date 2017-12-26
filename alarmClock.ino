@@ -35,10 +35,21 @@ void setup()
 	
 	lcd.initialize();
 	lcd.sendCommands("\x21\xA8\x20");
-	lcd.sendString(5, 0, "mode: NORMAL");
 	
+	// set time sync to read from the RTC every 5min. (which is actually sync()'d in now() if it detects elapsed time >= 300s)
 	setSyncProvider(RTC.get);
 	// setSyncInterval(10);
+	
+	// Initial screen
+	tmElements_t tm;
+	breakTime(now(), tm);
+	char timestr[] = "now - 15:37   ";
+	timestr[6] = lookup[tm.Hour/10];
+	timestr[7] = lookup[tm.Hour%10];
+	timestr[9] = lookup[tm.Minute/10];
+	timestr[10] = lookup[tm.Minute%10];
+	lcd.sendString(0, 0, timestr);
+	lcd.sendString(5, 0, "mode: NORMAL");
 	
 	pinMode(BUT_PIN1, INPUT);
 	pinMode(BUT_PIN2, INPUT);
