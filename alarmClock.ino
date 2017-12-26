@@ -35,6 +35,7 @@ void setup()
 	
 	lcd.initialize();
 	lcd.sendCommands("\x21\xA8\x20");
+	lcd.sendString(5, 0, "mode: NORMAL");
 	
 	setSyncProvider(RTC.get);
 	// setSyncInterval(10);
@@ -53,7 +54,7 @@ void loop()
 	static int prev1Val = 0;
 	static int prev2Val = 0;
 	static char backlight = 0;
-	static enum mode mode = mode_BOOT;
+	static enum mode mode = mode_NORMAL;
 	static char longPress = 0;
 	static int longCount = 0;
 	enum but but, realbut;
@@ -131,6 +132,8 @@ void loop()
 		analogWrite(SCRN_LED_PIN, (backlight) ? 2 : 0);
 	}
 	
+	enum mode modebak = mode;
+	
 	if(realbut != but_SELECT_LONG)
 	{
 		mode = modeMux(mode, realbut);
@@ -138,6 +141,28 @@ void loop()
 	else
 	{
 		mode = modeMux(mode, but_NONE);
+	}
+	
+	if(mode != modebak)
+	{
+		switch(mode)
+		{
+			default:
+				mode = mode_NORMAL;
+				// intentional fallthrough
+			case mode_NORMAL:
+				lcd.sendString(5, 0, "mode: NORMAL  ");
+				break;
+			case mode_SETTIME:
+				lcd.sendString(5, 0, "mode: SETTIME ");
+				break;
+			case mode_SETALARM:
+				lcd.sendString(5, 0, "mode: SETALARM");
+				break;
+			case mode_DEMO:
+				lcd.sendString(5, 0, "mode: DEMO    ");
+				break;
+		}
 	}
 	
 	prevBut = but;

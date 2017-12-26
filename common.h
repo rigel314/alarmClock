@@ -27,7 +27,7 @@
 #define histequal(a, b, hist) (a > b-hist && a < b+hist) // Is a close enough to b?
 
 // types
-enum mode {mode_BOOT, mode_SETTIME, mode_SETALARM, mode_DEMO, mode_NMODES};
+enum mode {mode_INVALID, mode_NORMAL, mode_SETTIME, mode_SETALARM, mode_DEMO, mode_NMODES};
 enum but {but_NONE, but_LEFT, but_RIGHT, but_UP, but_DOWN, but_SELECT, but_LEFT_LONG, but_RIGHT_LONG, but_UP_LONG, but_DOWN_LONG, but_SELECT_LONG};
 
 // sounds
