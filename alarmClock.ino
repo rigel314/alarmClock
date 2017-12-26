@@ -15,7 +15,7 @@ LCD lcd(SCRN_SCLK_PIN, SCRN_MOSI_PIN, SCRN_DC_PIN, SCRN_RST_PIN, SCRN_SCE_PIN);
 const char sound[] PROGMEM =
 #include "bird.h" // This has the data and a semicolon
 
-static char const lookup[] = "0123456789ABCDEF";
+char const lookup[] = "0123456789ABCDEF";
 
 // Called via timer interrupt
 void timer1inter()
@@ -68,6 +68,7 @@ void loop()
 	static enum mode mode = mode_NORMAL;
 	static char longPress = 0;
 	static int longCount = 0;
+	
 	enum but but, realbut;
 	
 	// Handle interrupt
@@ -125,13 +126,17 @@ void loop()
 		longCount = 0;
 	}
 	
-	if(but != but_NONE && longCount == 5000 && !longPress)
+	if(longCount == 5000 && !longPress)
 	{
 		longPress = 1;
 		realbut = (enum but)(but + 5);
 	}
 	if(but != but_NONE)
 	{
+		if(longPress && longCount % 200 == 1)
+		{
+			realbut = (enum but)(but + 10);
+		}
 		longCount++;
 	}
 	

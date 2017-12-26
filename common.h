@@ -28,13 +28,14 @@
 
 // types
 enum mode {mode_INVALID, mode_NORMAL, mode_SETTIME, mode_SETALARM, mode_DEMO, mode_NMODES};
-enum but {but_NONE, but_LEFT, but_RIGHT, but_UP, but_DOWN, but_SELECT, but_LEFT_LONG, but_RIGHT_LONG, but_UP_LONG, but_DOWN_LONG, but_SELECT_LONG};
+enum but {but_NONE, but_LEFT, but_RIGHT, but_UP, but_DOWN, but_SELECT, but_LEFT_LONG, but_RIGHT_LONG, but_UP_LONG, but_DOWN_LONG, but_SELECT_LONG, but_LEFT_RPT, but_RIGHT_RPT, but_UP_RPT, but_DOWN_RPT, but_SELECT_RPT};
 
 // sounds
 extern const char sound[16000];
 
 // externs
 extern LCD lcd;
+extern char const lookup[];
 
 // Debugging stuff - smaller, faster code if DEBUG is not defined
 #define DEBUG // for now
