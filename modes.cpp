@@ -3,32 +3,6 @@
 
 #include "modes.h"
 
-inline enum mode modeMux(enum mode mode, enum but* butp)
-{
-	// if(but != but_NONE)
-	// 	logwobj("button", but);
-	
-	switch(mode)
-	{
-		case mode_NORMAL:
-			mode = normmode(mode, butp);
-			break;
-		case mode_SETTIME:
-			mode = stimemode(mode, butp);
-			break;
-		case mode_SETALARM:
-			mode = salrmmode(mode, butp);
-			break;
-		case mode_DEMO:
-			mode = demomode(mode, butp);
-			break;
-		default:
-			break;
-	}
-	
-	return mode;
-}
-
 enum mode normmode(enum mode mode, enum but* butp)
 {
 	(void) butp;
