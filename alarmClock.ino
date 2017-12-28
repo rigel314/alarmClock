@@ -1,3 +1,6 @@
+// TODO: add function that prints a help icon on the screen that takes an array of enums, which are indexes into a string table.
+// TODO: add 2min timeout for modes that goes back to normal mode, so the alarm still goes off.
+
 #include <LCD.h>
 #include <TimerOne.h>
 #include <TimeLib.h>
@@ -15,7 +18,8 @@ LCD lcd(SCRN_SCLK_PIN, SCRN_MOSI_PIN, SCRN_DC_PIN, SCRN_RST_PIN, SCRN_SCE_PIN);
 const char sound[] PROGMEM =
 #include "bird.h" // This has the data and a semicolon
 
-char const lookup[] = "0123456789ABCDEF";
+const char lookup[] = "0123456789ABCDEF";
+const char* emptyLine = "              ";
 
 // Called via timer interrupt
 void timer1inter()
@@ -145,7 +149,7 @@ void loop()
 	{
 		// logwobj("B5", but2Val);
 		backlight = !backlight;
-		analogWrite(SCRN_LED_PIN, (backlight) ? 2 : 0);
+		analogWrite(SCRN_LED_PIN, (backlight) ? 10 : 0);
 	}
 	
 	enum mode modebak = mode;

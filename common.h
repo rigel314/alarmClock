@@ -37,6 +37,9 @@ extern const char sound[16000];
 extern LCD lcd;
 extern char const lookup[];
 
+// strings
+extern const char* emptyLine;
+
 // Debugging stuff - smaller, faster code if DEBUG is not defined
 #define DEBUG // for now
 
