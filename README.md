@@ -16,7 +16,7 @@ My fiancé wanted an alarm clock that simulated a sunrise before ringing.  Since
  * MCP4725 I2C DAC for audio
  * Speaker
  * Nokia 5110 84x48 pixel LCD screen
- * Arduino Duemilanove atmega328P
+ * Arduino Duemilanove/Uno with atmega328P
  * 12V power supply
 
 See the [/eagle](https://github.com/rigel314/alarmClock/tree/master/eagle) folder in this repo for the board layout.
