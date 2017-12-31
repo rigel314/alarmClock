@@ -194,7 +194,7 @@ enum mode salrmmode(enum mode mode, enum but* butp)
 	{
 		// logwobj("but IN:", *butp);
 		char str[19];
-		char str3[14];
+		char str3[15];
 		newentry = entry;
 		newval = val;
 		
