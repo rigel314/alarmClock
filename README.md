@@ -4,7 +4,7 @@ alarmClock
 My fiancé wanted an alarm clock that simulated a sunrise before ringing.  Since all the ones you can buy are expensive, dumb, or both, I decided to make one.
 
 # Dependencies
- * [My fork of firelizzard's Nokia LCD library](https://github.com/firelizzard18/Arduino-LCD-Screen), which is a submodule
+ * [My fork of firelizzard's Nokia LCD library](https://github.com/rigel314/Arduino-LCD-Screen), which is a submodule
  * [TimerOne](https://github.com/PaulStoffregen/TimerOne) as installed by the teensy installer
  * [TimeLib](https://github.com/PaulStoffregen/Time) as installed by the teensy installer
  * [DS1307RTC](https://github.com/PaulStoffregen/DS1307RTC) as installed through the Arduino IDE "Manage Libraries" interface
