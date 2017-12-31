@@ -19,5 +19,5 @@ My fiancé wanted an alarm clock that simulated a sunrise before ringing.  Since
  * Arduino Duemilanove atmega328P
  * 12V power supply
 
-See the /eagle folder in this repo for the board layout.
+See the [/eagle](https://github.com/rigel314/alarmClock/tree/master/eagle) folder in this repo for the board layout.
 <a href="https://raw.githubusercontent.com/rigel314/alarmClock/master/images/schematic.png">![Schematic](https://raw.githubusercontent.com/rigel314/alarmClock/master/images/schematic.png)</a>
