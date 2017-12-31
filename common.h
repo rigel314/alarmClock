@@ -66,24 +66,24 @@ extern const char* emptyLine;
 					} \
 					while(0)
 					
-#define logobj(obj) \
+#define logobj(obj, ...) \
 					do \
 					{ \
-						Serial.println(obj); \
+						Serial.println(obj, ##__VA_ARGS__); \
 					} \
 					while(0)
 					
-#define logwobj(msg, obj) \
+#define logwobj(msg, obj, ...) \
 					do \
 					{ \
 						log(msg); \
-						logobj(obj); \
+						logobj(obj, ##__VA_ARGS__); \
 					} \
 					while(0)
 #else
 #define log(msg)
-#define logobj(obj)
-#define logwobj(msg, obj)
+#define logobj(obj, ...)
+#define logwobj(msg, obj, ...)
 #endif // DEBUG
 
 #endif // _COMMON_H
