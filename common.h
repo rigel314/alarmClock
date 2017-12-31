@@ -34,9 +34,9 @@ enum mode {mode_INVALID, mode_NORMAL, mode_SETTIME, mode_SETALARM, mode_DEMO, mo
 enum but {but_NONE, but_LEFT, but_RIGHT, but_UP, but_DOWN, but_SELECT, but_LEFT_LONG, but_RIGHT_LONG, but_UP_LONG, but_DOWN_LONG, but_SELECT_LONG, but_LEFT_RPT, but_RIGHT_RPT, but_UP_RPT, but_DOWN_RPT, but_SELECT_RPT};
 struct alarm
 {
-	char hour;
-	char min;
-	char enDayEn; // bit 7 is "alarm in use", bits 6-0 are a weekday bit field for sunday-saturday
+	uint8_t hour;
+	uint8_t min;
+	uint8_t enDayEn; // bit 7 is "alarm in use", bits 6-0 are a weekday bit field for sunday-saturday
 };
 
 // sounds
