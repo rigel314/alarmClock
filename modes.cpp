@@ -155,7 +155,7 @@ enum mode salrmmode(enum mode mode, enum but* butp)
 	static char newentry = 0;
 	static int alarmChoice;
 	static char val = 0;
-	static char newval = 0;
+	// static char newval = 0;
 	static struct alarm alrm = {0,0,0};
 	
 	char len;
@@ -172,15 +172,14 @@ enum mode salrmmode(enum mode mode, enum but* butp)
 		if(nALARMS == 1) // Maybe make this an #if
 		{
 			entry++;
-			val = alarms[0].hour;
-			len = snprintf(str, 19, "set: %s%02d%s:%02d", LCD::reverseVideoOn, (int)alarms[0].hour, LCD::reverseVideoOff, (int)alarms[0].min);
+			val = alrm.hour;
+			len = snprintf(str, 19, "set: %s%02d%s:%02d", LCD::reverseVideoOn, (int)alrm.hour, LCD::reverseVideoOff, (int)alrm.min);
 		}
 		else
 		{
 			val = alarmChoice;
 			len = snprintf(str, 19, "alarm: %d", (int)alarmChoice+1);
 		}
-		alrm = alarms[alarmChoice];
 		for(int i = len; i < 18; i++)
 			str[i] = ' ';
 		str[18] = '\0';
@@ -196,7 +195,7 @@ enum mode salrmmode(enum mode mode, enum but* butp)
 		char str[19];
 		char str3[15];
 		newentry = entry;
-		newval = val;
+		// newval = val;
 		
 		// handle buttons
 		switch(but)
@@ -260,6 +259,7 @@ enum mode salrmmode(enum mode mode, enum but* butp)
 				case 10:
 				case 11:
 					alrm.enDayEn = (alrm.enDayEn & ~(1 << shft)) | (val << shft);
+					// logwobj("enDayEn", (int)alrm.enDayEn, HEX);
 					break;
 				default:
 					break;
@@ -267,22 +267,9 @@ enum mode salrmmode(enum mode mode, enum but* butp)
 		}
 		
 		entry = newentry;
-		val = newval;
+		// val = newval;
 		
 		strcpy(str3, emptyLine);
-		
-		// create line 3 for disabled weekdays
-		if(entry >= 5)
-		{
-			strcpy(str3, "off:");
-			for(int i = 0; i < 7; i++)
-			{
-				str3[4+i] = (alrm.enDayEn & (1 << (6-i))) ? ' ' : days[i];
-			}
-			for(int i = 12; i < 14; i++)
-				str3[i] = ' ';
-			str3[14] = '\0';
-		}
 		
 		char len;
 		shft = (6-(entry-5)); // calculate this again on the new entry
@@ -335,22 +322,27 @@ enum mode salrmmode(enum mode mode, enum but* butp)
 			case 10:
 			case 11:
 				if(entrychanged)
-					val = alrm.enDayEn & (1 << shft);
+					val = !!(alrm.enDayEn & (1 << shft));
 				if(val < 0)
 					val = 1;
 				if(val > 1)
 					val = 0;
 				len = 16;
 				strcpy(str, "on: ");
+				strcpy(str3, "off:");
 				for(int i = 0; i < 7; i++)
 				{
-					char curval = (alrm.enDayEn & ~(1 << shft)) | (val << shft);
+					uint8_t curval = (alrm.enDayEn & ~(1 << shft)) | (val << shft);
 					if(i == entry-5)
 						memcpy(&str[4+i], LCD::reverseVideoOn, 2);
 					str[4+i+2*(i >= entry-5)+2*(i > entry-5)] = (curval & (1 << (6-i))) ? days[i] : ' ';
+					str3[4+i] = (curval & (1 << (6-i))) ? ' ' : days[i]; // create line 3 for disabled weekdays
 					if(i == entry-5)
 						memcpy(&str[4+i+3], LCD::reverseVideoOff, 2);
 				}
+				for(int i = 12; i < 14; i++)
+					str3[i] = ' ';
+				str3[14] = '\0';
 				break;
 			default:
 				len = 0;
@@ -368,20 +360,19 @@ enum mode salrmmode(enum mode mode, enum but* butp)
 			lcd.sendString(3, 0, str3);
 		}
 		
-		if(but == but_SELECT)
-		{
-			// update real variable
-			alarms[alarmChoice] = alrm;
-			log("new alarm");
-			logobj(alarms[alarmChoice].hour);
-			logobj(alarms[alarmChoice].min);
-			logobj(alarms[alarmChoice].enDayEn);
-			// TODO: write alarms to EEPROM/RTCram
-		}
-		
 		// Erase lines 3 and 4
 		if(entry == 0)
 		{
+			if(but == but_SELECT || but == but_RIGHT)
+			{
+				// update real variable
+				alarms[alarmChoice] = alrm;
+				// log("new alarm");
+				// logobj((int)alarms[alarmChoice].hour);
+				// logobj((int)alarms[alarmChoice].min);
+				// logobj((int)alarms[alarmChoice].enDayEn, HEX);
+				// TODO: write alarms to EEPROM/RTCram
+			}
 			lcd.sendString(4, 0, (char*)emptyLine);
 			lcd.sendString(3, 0, (char*)emptyLine);
 		}
