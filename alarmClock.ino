@@ -1,12 +1,13 @@
 // TODO: add function that prints a help icon on the screen that takes an array of enums, which are indexes into a string table.
 // TODO: add 2min timeout for modes that goes back to normal mode, so the alarm still goes off.
+// TODO: reverify 8kHz sound, since I removed a mask
 
-#include <LCD.h>
 #include <TimerOne.h>
 #include <TimeLib.h>
 #include <DS1307RTC.h>
 #include <Wire.h>
 #include <avr/pgmspace.h>
+// #include <EEPROM.h>
 
 #include "common.h"
 #include "modes.h"
@@ -21,10 +22,13 @@ const char sound[] PROGMEM =
 const char lookup[] = "0123456789ABCDEF";
 const char* emptyLine = "              ";
 
+struct alarm alarms[nALARMS] = {{0,0,0}};
+
 // Called via timer interrupt
 void timer1inter()
 {
 	gotTimer1 = 1;
+	// logobj("inter");
 }
 
 void setup()
@@ -38,7 +42,7 @@ void setup()
 	Timer1.attachInterrupt(timer1inter);
 	
 	lcd.initialize();
-	lcd.sendCommands("\x21\xA8\x20");
+	lcd.sendCommands("\x21\xAC\x20");
 	
 	// set time sync to read from the RTC every 5min. (which is actually sync()'d in now() if it detects elapsed time >= 300s)
 	setSyncProvider(RTC.get);
@@ -55,12 +59,16 @@ void setup()
 	lcd.sendString(0, 0, timestr);
 	lcd.sendString(5, 0, "mode: NORMAL");
 	
+	// Set pin directions
 	pinMode(BUT_PIN1, INPUT);
 	pinMode(BUT_PIN2, INPUT);
 	
 	pinMode(RED_PIN, OUTPUT);
 	pinMode(GRN_PIN, OUTPUT);
 	pinMode(BLU_PIN, OUTPUT);
+	
+	// get saved settings
+	// TODO: read alarm time and other settings(backlight intensity?) from EEPROM/RTCram
 }
 
 void loop()
@@ -139,7 +147,7 @@ void loop()
 	{
 		if(longPress && longCount % 200 == 1)
 		{
-			realbut = (enum but)(but + 10);
+			realbut = (enum but)(but + 10); // Unless a repeat should be sent
 		}
 		longCount++;
 	}
@@ -148,27 +156,23 @@ void loop()
 	if(realbut == but_SELECT_LONG)
 	{
 		// logwobj("B5", but2Val);
+		realbut = but_NONE;
 		backlight = !backlight;
 		analogWrite(SCRN_LED_PIN, (backlight) ? 10 : 0);
 	}
 	
 	enum mode modebak = mode;
 	
-	if(realbut != but_SELECT_LONG)
-	{
-		mode = modeMux(mode, &realbut);
-	}
-	else
-	{
-		enum but tmp = but_NONE;
-		mode = modeMux(mode, &tmp);
-	}
+	mode = modeMux(mode, &realbut);
 	
 	// default actions for buttons
 	if(realbut == but_LEFT)
 		mode = (enum mode)(mode - 1);
 	if(realbut == but_RIGHT)
+	{
 		mode = (enum mode)(mode + 1);
+		// logwobj("default mode++ handler", modebak);
+	}
 	
 	if(mode == mode_NMODES)
 	{
@@ -176,6 +180,7 @@ void loop()
 	}
 	if(mode == mode_INVALID)
 	{
+		// logwobj("default invalid mode handler", modebak);
 		mode = mode_DEMO;
 	}
 	
@@ -184,6 +189,7 @@ void loop()
 		switch(mode)
 		{
 			default:
+				logwobj("weird mode", mode);
 				mode = mode_NORMAL;
 				// intentional fallthrough
 			case mode_NORMAL:
