@@ -28,6 +28,7 @@ struct alarm alarms[nALARMS] = {{0,0,0}};
 void timer1inter()
 {
 	gotTimer1 = 1;
+	// logobj("inter");
 }
 
 void setup()
@@ -167,7 +168,8 @@ void loop()
 	// default actions for buttons
 	if(realbut == but_LEFT)
 		mode = (enum mode)(mode - 1);
-	if(realbut == but_RIGHT){
+	if(realbut == but_RIGHT)
+	{
 		mode = (enum mode)(mode + 1);
 		// logwobj("default mode++ handler", modebak);
 	}
@@ -187,6 +189,7 @@ void loop()
 		switch(mode)
 		{
 			default:
+				logwobj("weird mode", mode);
 				mode = mode_NORMAL;
 				// intentional fallthrough
 			case mode_NORMAL:
