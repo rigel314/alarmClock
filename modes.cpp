@@ -14,10 +14,119 @@ const char* days = "SMTWHFS";
 
 static const uint8_t monthDays[]={31,28,31,30,31,30,31,31,30,31,30,31}; // API starts months from 1, this array starts from 0
 
+time_t alarm2time(char hour, char min)
+{
+	tmElements_t tm1, tm2;
+	time_t nowtime;
+	
+	nowtime = now();
+	breakTime(nowtime, tm1);
+	
+	tm1.Hour = hour;
+	tm1.Minute = min;
+	tm1.Second = 0;
+	breakTime(nowtime + SECS_PER_DAY, tm2);
+	
+	if(makeTime(tm1) > nowtime - ALARM_DURATION)
+		return makeTime(tm1);
+	else
+		return makeTime(tm2);
+}
+
+inline time_t secsUntilAlarm(time_t alarmTime)
+{
+	return alarmTime - now();
+}
+
 enum mode normmode(enum mode mode, enum but* butp)
 {
+	static char submode = 0;
+	static char prevsubmode = -1;
+	
 	enum but but = *butp;
-	(void) but;
+	time_t until = 86400;
+	
+	if(but == but_SELECT)
+	{
+		submode++;
+		if(submode > 1)
+			submode = 0;
+		*butp = but_NONE;
+	}
+	
+	for(int i = 0; i < nALARMS; i++)
+	{
+		if(alarms[i].enDayEn & 0x80)
+		{
+			time_t altm = alarm2time(alarms[i].hour, alarms[i].min);
+			tmElements_t tm;
+			
+			breakTime(altm, tm);
+			if(alarms[i].enDayEn & 1 << (7-tm.Wday))
+				until = min(until, secsUntilAlarm(altm));
+		}
+	}
+	
+	uint8_t r, g, b;
+	r = g = b = 0;
+	
+	if(until < ALARM_DURATION)
+	{
+		if(until > ALARM_DURATION - ALARM_LED_DURATION)
+		{
+			r = 255L*ALARM_DURATION/(ALARM_LED_DURATION) - 255L*until/(ALARM_LED_DURATION);
+			if(r > 127)
+			{
+				g = r - 127;
+			}
+			if(g > 63)
+			{
+				b = g - 63;
+			}
+		}
+		else
+		{
+			r = 255;
+			g = 127;
+			b = 63;
+		}
+		// log("rgb");
+		// logobj(r);
+		// logobj(g);
+		// logobj(b);
+	}
+	else
+	{
+		submode = 0;
+	}
+	
+	if(submode != prevsubmode)
+	{
+		switch(submode)
+		{
+			case 0:
+				analogWrite(RED_PIN, r);
+				analogWrite(GRN_PIN, g);
+				analogWrite(BLU_PIN, b);
+				lcd.sendString(4, 0, emptyLine);
+				break;
+			case 1:
+				lcd.sendString(4, 0, "no noise      ");
+				analogWrite(RED_PIN, r);
+				analogWrite(GRN_PIN, g);
+				analogWrite(BLU_PIN, b);
+				break;
+			case 2:
+				lcd.sendString(4, 0, "no light      ");
+				analogWrite(RED_PIN, 0);
+				analogWrite(GRN_PIN, 0);
+				analogWrite(BLU_PIN, 0);
+				break;
+		}
+	}
+	
+	prevsubmode = submode;
+	
 	return mode;
 }
 
@@ -367,10 +476,10 @@ enum mode salrmmode(enum mode mode, enum but* butp)
 			{
 				// update real variable
 				alarms[alarmChoice] = alrm;
-				// log("new alarm");
-				// logobj((int)alarms[alarmChoice].hour);
-				// logobj((int)alarms[alarmChoice].min);
-				// logobj((int)alarms[alarmChoice].enDayEn, HEX);
+				log("new alarm");
+				logobj((int)alarms[alarmChoice].hour);
+				logobj((int)alarms[alarmChoice].min);
+				logobj((int)alarms[alarmChoice].enDayEn, HEX);
 				// TODO: write alarms to EEPROM/RTCram
 			}
 			lcd.sendString(4, 0, (char*)emptyLine);
