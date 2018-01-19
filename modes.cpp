@@ -496,6 +496,7 @@ enum mode salrmmode(enum mode mode, enum but* butp)
 
 enum mode demomode(enum mode mode, enum but* butp)
 {
+	#ifndef DEBUG
 	enum but but = *butp;
 	
 	if(but == but_UP)
@@ -567,5 +568,7 @@ enum mode demomode(enum mode mode, enum but* butp)
 		lcd.sendString(4, 0, (char*)emptyLine);
 	}
 	
+	#endif
+
 	return mode;
 }

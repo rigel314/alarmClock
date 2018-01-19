@@ -22,6 +22,12 @@ const char sound[] PROGMEM =
 const char lookup[] = "0123456789ABCDEF";
 const char* emptyLine = "              ";
 
+#ifdef DEBUG
+char sercmd[20];
+int cmdlen = 0;
+char cmdval = 0;
+#endif
+
 struct alarm alarms[nALARMS] = {{0,0,0}};
 
 // Called via timer interrupt
@@ -100,6 +106,37 @@ void loop()
 		
 		lcd.sendString(0, 0, timestr);
 	}
+	
+	#ifdef DEBUG
+	if(Serial.available())
+	{
+		char chr = Serial.read();
+		if(chr == '\x03') // Ctrl-C
+		{
+			cmdlen = 0;
+		}
+		else if(chr == '\n')
+		{
+			sercmd[cmdlen] = 0;
+			// handle cmd
+			if(!strncmp(sercmd, "SA", 2))
+			{ // SA HH:MM FF
+				char hour;
+				char min;
+				char flags;
+				sscanf(sercmd, "SA %02hhd:%02hhd %02hhx", &hour, &min, &flags);
+			}
+			cmdval = 1;
+		}
+		else
+		{
+			if(cmdlen < 19)
+			{
+				sercmd[cmdlen++] = chr;
+			}
+		}
+	}
+	#endif
 	
 	// Figure out which button is pressed
 	int but1Val = analogRead(BUT_PIN1);
@@ -210,4 +247,5 @@ void loop()
 	prevBut = but;
 	prev1Val = but1Val;
 	prev2Val = but2Val;
+	cmdval = 0;
 }

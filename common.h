@@ -59,6 +59,9 @@ extern const char* emptyLine;
 #define DEBUG // for now
 
 #ifdef DEBUG
+extern char sercmd[20];
+extern int cmdlen;
+extern char cmdval;
 #define _FILENAME_ "alarmClock.ino"
 #define _XSTRINGIFY(x) #x
 #define STRINGIFY(x) _XSTRINGIFY(x)
