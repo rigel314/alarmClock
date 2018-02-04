@@ -121,10 +121,14 @@ void loop()
 			// handle cmd
 			if(!strncmp(sercmd, "SA", 2))
 			{ // SA HH:MM FF
-				char hour;
-				char min;
-				char flags;
+				uint8_t hour;
+				uint8_t min;
+				uint8_t flags;
 				sscanf(sercmd, "SA %02hhd:%02hhd %02hhx", &hour, &min, &flags);
+				alarms[0].hour = hour;
+				alarms[0].min = min;
+				alarms[0].enDayEn = flags;
+				logobj("Setting Alarm.");
 			}
 			cmdval = 1;
 		}
@@ -247,5 +251,9 @@ void loop()
 	prevBut = but;
 	prev1Val = but1Val;
 	prev2Val = but2Val;
+	#ifdef DEBUG
+	if(cmdval)
+		cmdlen = 0;
 	cmdval = 0;
+	#endif
 }

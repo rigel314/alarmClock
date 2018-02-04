@@ -42,18 +42,24 @@ enum mode normmode(enum mode mode, enum but* butp)
 {
 	static char submode = 0;
 	static char prevsubmode = -1;
+	static char activeAlarm = 0;
+	static uint8_t prevr = 0, prevg = 0, prevb = 0;
 	
+	char update = 0;
 	enum but but = *butp;
 	time_t until = 86400;
 	
+	// cycle through modes
 	if(but == but_SELECT)
 	{
 		submode++;
-		if(submode > 1)
+		if(submode > 3)
 			submode = 0;
+		logobj((int)submode);
 		*butp = but_NONE;
 	}
 	
+	// look for next alarm
 	for(int i = 0; i < nALARMS; i++)
 	{
 		if(alarms[i].enDayEn & 0x80)
@@ -72,6 +78,7 @@ enum mode normmode(enum mode mode, enum but* butp)
 	
 	if(until < ALARM_DURATION)
 	{
+		activeAlarm = 1;
 		if(until > ALARM_DURATION - ALARM_LED_DURATION)
 		{
 			r = 255L*ALARM_DURATION/(ALARM_LED_DURATION) - 255L*until/(ALARM_LED_DURATION);
@@ -90,6 +97,7 @@ enum mode normmode(enum mode mode, enum but* butp)
 			g = 127;
 			b = 63;
 		}
+		
 		// log("rgb");
 		// logobj(r);
 		// logobj(g);
@@ -97,30 +105,47 @@ enum mode normmode(enum mode mode, enum but* butp)
 	}
 	else
 	{
-		submode = 0;
+		if(submode == 3)
+		{
+			logobj("here");
+			activeAlarm = 0;
+			submode = 0;
+		}
 	}
 	
-	if(submode != prevsubmode)
+	if(r != prevr || g != prevg || b != prevb || submode != prevsubmode)
+		update = 1;
+	
+	if(update)
 	{
+		logobj((int) submode);
 		switch(submode)
 		{
 			case 0:
+				lcd.sendString(4, 0, emptyLine);
 				analogWrite(RED_PIN, r);
 				analogWrite(GRN_PIN, g);
 				analogWrite(BLU_PIN, b);
-				lcd.sendString(4, 0, emptyLine);
 				break;
 			case 1:
-				lcd.sendString(4, 0, "no noise      ");
+				lcd.sendString(4, 0, "no ambiance   ");
 				analogWrite(RED_PIN, r);
 				analogWrite(GRN_PIN, g);
 				analogWrite(BLU_PIN, b);
 				break;
 			case 2:
-				lcd.sendString(4, 0, "no light      ");
+				lcd.sendString(4, 0, "no noise      ");
+				analogWrite(RED_PIN, r);
+				analogWrite(GRN_PIN, g);
+				analogWrite(BLU_PIN, b);
+				break;
+			case 3:
+				lcd.sendString(4, 0, "no light&noise");
 				analogWrite(RED_PIN, 0);
 				analogWrite(GRN_PIN, 0);
 				analogWrite(BLU_PIN, 0);
+				break;
+			default:
 				break;
 		}
 	}

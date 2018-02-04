@@ -9,7 +9,7 @@ My fiancé wanted an alarm clock that simulated a sunrise before ringing.  Since
     * `git submodule update --init`
     * `cp -a Arduino-LCD-Screen ../../libraries/`
  * [TimerOne](https://github.com/PaulStoffregen/TimerOne) as installed by the teensy installer or the Arduino IDE "Manage Libraries" interface
- * [TimeLib](https://github.com/PaulStoffregen/Time) as installed by the teensy installer or the Arduino IDE "Manage Libraries" interface
+ * [Time](https://github.com/PaulStoffregen/Time) as installed by the teensy installer or the Arduino IDE "Manage Libraries" interface
  * [DS1307RTC](https://github.com/PaulStoffregen/DS1307RTC) as installed through the Arduino IDE "Manage Libraries" interface
 
 # Hardware
