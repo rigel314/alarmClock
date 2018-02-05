@@ -42,22 +42,12 @@ enum mode normmode(enum mode mode, enum but* butp)
 {
 	static char submode = 0;
 	static char prevsubmode = -1;
-	static char activeAlarm = 0;
+	static char alarmWaiting = 0;
 	static uint8_t prevr = 0, prevg = 0, prevb = 0;
 	
 	char update = 0;
 	enum but but = *butp;
 	time_t until = 86400;
-	
-	// cycle through modes
-	if(but == but_SELECT)
-	{
-		submode++;
-		if(submode > 3)
-			submode = 0;
-		logobj((int)submode);
-		*butp = but_NONE;
-	}
 	
 	// look for next alarm
 	for(int i = 0; i < nALARMS; i++)
@@ -73,12 +63,21 @@ enum mode normmode(enum mode mode, enum but* butp)
 		}
 	}
 	
+	// cycle through modes
+	if(but == but_SELECT && submode >= 1 && submode <= 3)
+	{
+		submode++;
+		*butp = but_NONE;
+	}
+	
 	uint8_t r, g, b;
 	r = g = b = 0;
 	
-	if(until < ALARM_DURATION)
+	if(until < ALARM_DURATION && !alarmWaiting)
 	{
-		activeAlarm = 1;
+		if(submode == 0)
+			submode = 1;
+		
 		if(until > ALARM_DURATION - ALARM_LED_DURATION)
 		{
 			r = 255L*ALARM_DURATION/(ALARM_LED_DURATION) - 255L*until/(ALARM_LED_DURATION);
@@ -105,11 +104,18 @@ enum mode normmode(enum mode mode, enum but* butp)
 	}
 	else
 	{
-		if(submode == 3)
+		r = 255;
+		g = 127;
+		b = 63;
+		if(submode == 4)
 		{
 			logobj("here");
-			activeAlarm = 0;
 			submode = 0;
+			alarmWaiting = 0;
+		}
+		if(submode > 0)
+		{
+			alarmWaiting = 1;
 		}
 	}
 	
@@ -123,23 +129,29 @@ enum mode normmode(enum mode mode, enum but* butp)
 		{
 			case 0:
 				lcd.sendString(4, 0, emptyLine);
-				analogWrite(RED_PIN, r);
-				analogWrite(GRN_PIN, g);
-				analogWrite(BLU_PIN, b);
+				analogWrite(RED_PIN, 0);
+				analogWrite(GRN_PIN, 0);
+				analogWrite(BLU_PIN, 0);
 				break;
 			case 1:
-				lcd.sendString(4, 0, "no ambiance   ");
+				lcd.sendString(4, 0, "normal alarm  ");
 				analogWrite(RED_PIN, r);
 				analogWrite(GRN_PIN, g);
 				analogWrite(BLU_PIN, b);
 				break;
 			case 2:
-				lcd.sendString(4, 0, "no noise      ");
+				lcd.sendString(4, 0, "no ambiance   ");
 				analogWrite(RED_PIN, r);
 				analogWrite(GRN_PIN, g);
 				analogWrite(BLU_PIN, b);
 				break;
 			case 3:
+				lcd.sendString(4, 0, "no noise      ");
+				analogWrite(RED_PIN, r);
+				analogWrite(GRN_PIN, g);
+				analogWrite(BLU_PIN, b);
+				break;
+			case 4:
 				lcd.sendString(4, 0, "no light&noise");
 				analogWrite(RED_PIN, 0);
 				analogWrite(GRN_PIN, 0);

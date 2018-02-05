@@ -1,0 +1,273 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     12685,        265]
+NotebookOptionsPosition[     12260,        249]
+NotebookOutlinePosition[     12602,        264]
+CellTagsIndexPosition[     12559,        261]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[
+ RowBox[{"Graph", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Labeled", "[", 
+      RowBox[{
+       RowBox[{"\"\<begin\>\"", "\[Rule]", "\"\<look for alarm(0)\>\""}], 
+       ",", "\"\<init\>\""}], "]"}], ",", 
+     RowBox[{"Labeled", "[", 
+      RowBox[{
+       RowBox[{
+       "\"\<look for alarm(0)\>\"", "\[Rule]", "\"\<look for alarm(0)\>\""}], 
+       ",", "\"\<until > ALARM_DURATION\>\""}], "]"}], ",", 
+     RowBox[{"Labeled", "[", 
+      RowBox[{
+       RowBox[{"\"\<look for alarm(0)\>\"", "\[Rule]", "\"\<alarm(1)\>\""}], 
+       ",", "\"\<until < ALARM_DURATION\>\""}], "]"}], ",", 
+     RowBox[{"Labeled", "[", 
+      RowBox[{
+       RowBox[{"\"\<alarm(1)\>\"", "\[Rule]", "\"\<alarm(1)\>\""}], ",", 
+       "\"\<no button\>\""}], "]"}], ",", 
+     RowBox[{"Labeled", "[", 
+      RowBox[{
+       RowBox[{"\"\<alarm(1)\>\"", "\[Rule]", "\"\<no ambiance(2)\>\""}], 
+       ",", "\"\<button\>\""}], "]"}], ",", 
+     RowBox[{"Labeled", "[", 
+      RowBox[{
+       RowBox[{
+       "\"\<no ambiance(2)\>\"", "\[Rule]", "\"\<no ambiance(2)\>\""}], ",", 
+       "\"\<no button\>\""}], "]"}], ",", 
+     RowBox[{"Labeled", "[", 
+      RowBox[{
+       RowBox[{"\"\<no ambiance(2)\>\"", "\[Rule]", "\"\<no noise(3)\>\""}], 
+       ",", "\"\<button\>\""}], "]"}], ",", 
+     RowBox[{"Labeled", "[", 
+      RowBox[{
+       RowBox[{"\"\<no noise(3)\>\"", "\[Rule]", "\"\<no noise(3)\>\""}], 
+       ",", "\"\<no button\>\""}], "]"}], ",", 
+     RowBox[{"Labeled", "[", 
+      RowBox[{
+       RowBox[{
+       "\"\<no noise(3)\>\"", "\[Rule]", "\"\<no light&noise(4)\>\""}], ",", 
+       "\"\<button\>\""}], "]"}], ",", 
+     RowBox[{"Labeled", "[", 
+      RowBox[{
+       RowBox[{
+       "\"\<no light&noise(4)\>\"", "\[Rule]", "\"\<no light&noise(4)\>\""}], 
+       ",", "\"\<until < ALARM_DURATION\>\""}], "]"}], ",", 
+     RowBox[{"Labeled", "[", 
+      RowBox[{
+       RowBox[{
+       "\"\<no light&noise(4)\>\"", "\[Rule]", "\"\<look for alarm(0)\>\""}], 
+       ",", "\"\<until > ALARM_DURATION\>\""}], "]"}]}], "}"}], ",", 
+   RowBox[{"VertexLabels", "\[Rule]", "\"\<Name\>\""}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.726771511869298*^9, 3.726771514221005*^9}, {
+  3.726771582515944*^9, 3.7267717258420153`*^9}, {3.726771756965186*^9, 
+  3.726771806234006*^9}, {3.726773585847883*^9, 3.7267736782887783`*^9}, {
+  3.726773715476506*^9, 3.726773726581418*^9}, {3.726773769913794*^9, 
+  3.726773770426941*^9}, {3.726778036794065*^9, 3.726778060988079*^9}, {
+  3.726778235951116*^9, 3.7267782540791273`*^9}, {3.726778418319813*^9, 
+  3.726778458467091*^9}, {3.726778503097424*^9, 3.726778583952674*^9}, {
+  3.726797457706457*^9, 3.726797605208658*^9}, {3.726797705536385*^9, 
+  3.726797756515531*^9}},ExpressionUUID->"2fa4a92a-e76c-4a88-a4f1-\
+bf7f9229ae70"],
+
+Cell[BoxData[
+ GraphicsBox[
+  NamespaceBox["NetworkGraphics",
+   DynamicModuleBox[{Typeset`graph = HoldComplete[
+     Graph[{
+      "begin", "look for alarm(0)", "alarm(1)", "no ambiance(2)", 
+       "no noise(3)", "no light&noise(4)"}, {{{1, 2}, {2, 2}, {2, 3}, {3, 
+       3}, {3, 4}, {4, 4}, {4, 5}, {5, 5}, {5, 6}, {6, 6}, {6, 2}}, Null}, {
+      EdgeLabels -> {
+        DirectedEdge["no noise(3)", "no noise(3)"] -> "no button", 
+         DirectedEdge["no light&noise(4)", "no light&noise(4)"] -> 
+         "until < ALARM_DURATION", 
+         DirectedEdge["look for alarm(0)", "alarm(1)"] -> 
+         "until < ALARM_DURATION", 
+         DirectedEdge["no ambiance(2)", "no ambiance(2)"] -> "no button", 
+         DirectedEdge["no noise(3)", "no light&noise(4)"] -> "button", 
+         DirectedEdge["no ambiance(2)", "no noise(3)"] -> "button", 
+         DirectedEdge["no light&noise(4)", "look for alarm(0)"] -> 
+         "until > ALARM_DURATION", DirectedEdge["begin", "look for alarm(0)"] -> 
+         "init", DirectedEdge["alarm(1)", "alarm(1)"] -> "no button", 
+         DirectedEdge["look for alarm(0)", "look for alarm(0)"] -> 
+         "until > ALARM_DURATION", DirectedEdge["alarm(1)", "no ambiance(2)"] -> 
+         "button"}, VertexLabels -> {"Name"}}]]}, 
+    TagBox[GraphicsGroupBox[{
+       {Hue[0.6, 0.7, 0.5], Opacity[0.7], Arrowheads[
+        Medium], {
+         ArrowBox[{{0., 0.6714425594784671}, {1.0293588692688087`, 
+          0.6719535166981223}}, 0.028680341448116264`], 
+         InsetBox["\<\"init\"\>", {0.5146794346344044, 0.6716980380882946}, 
+          ImageScaled[{0.5, 0.5}],
+          BaseStyle->"Graphics"]}, {
+         ArrowBox[BezierCurveBox[{{1.0293588692688087`, 0.6719535166981223}, {
+          0.7530548600047642, 0.7949776022537611}, {0.7097865475774302, 
+          0.9432400393660424}, {0.7400985786378647, 1.0428604101993477`}, {
+          1.0130606522068395`, 1.1420362833501538`}, {1.1002516376096785`, 
+          1.0851085258283972`}, {1.1622480228823187`, 0.9436505980480537}, {
+          1.0293588692688087`, 0.6719535166981223}},
+          SplineDegree->7], 0.028680341448116264`], 
+         InsetBox["\<\"until > ALARM_DURATION\"\>", 
+          {0.858613646801856, 1.141896139796635}, ImageScaled[{0.5, 0.5}],
+          BaseStyle->"Graphics"]}, {
+         ArrowBox[{{1.0293588692688087`, 0.6719535166981223}, {
+          1.8329122458619642`, 1.3439945691114834`}}, 0.028680341448116264`], 
+         InsetBox["\<\"until < ALARM_DURATION\"\>", {1.4311355575653866, 1.0079740429048027},
+           ImageScaled[{0.5, 0.5}],
+          BaseStyle->"Graphics"]}, {
+         ArrowBox[BezierCurveBox[{{1.8329122458619642`, 
+          1.3439945691114834`}, {1.6266527099023578`, 1.3850303913071054`}, {
+          1.524984622890139, 1.5650214607372857`}, {1.5523178999321057`, 
+          1.7025030843567248`}, {1.918164611035673, 1.7912009830899072`}, {
+          2.005425661969555, 1.6815022417260952`}, {1.9974768948324615`, 
+          1.4749350563060863`}, {1.8329122458619642`, 1.3439945691114834`}},
+          SplineDegree->7], 0.028680341448116264`], 
+         InsetBox["\<\"no button\"\>", {1.7151024644372612, 1.8299172537030384},
+           ImageScaled[{0.5, 0.5}],
+          BaseStyle->"Graphics"]}, {
+         ArrowBox[{{1.8329122458619642`, 1.3439945691114834`}, {
+          2.78537445516035, 1.1302093220880365`}}, 0.028680341448116264`], 
+         InsetBox["\<\"button\"\>", {2.309143350511157, 1.2371019455997598}, 
+          ImageScaled[{0.5, 0.5}],
+          BaseStyle->"Graphics"]}, {
+         ArrowBox[BezierCurveBox[{{2.78537445516035, 1.1302093220880365`}, {
+          2.7352969826777276`, 1.3344620616713652`}, {2.855375539631595, 
+          1.5027306717898923`}, {2.9915114943486896`, 1.5361268796607752`}, {
+          3.226655832080782, 1.2421570279794938`}, {3.164174242817603, 
+          1.1166805127663377`}, {2.973640542245078, 1.0364926462435067`}, {
+          2.78537445516035, 1.1302093220880365`}},
+          SplineDegree->7], 0.028680341448116264`], 
+         InsetBox["\<\"no button\"\>", {3.175829296443619, 1.4425312984497025},
+           ImageScaled[{0.5, 0.5}],
+          BaseStyle->"Graphics"]}, {
+         ArrowBox[{{2.78537445516035, 1.1302093220880365`}, {
+          2.7847787322311683`, 0.2127540579711535}}, 0.028680341448116264`], 
+         InsetBox["\<\"button\"\>", {2.7850765936957593, 0.671481690029595}, 
+          ImageScaled[{0.5, 0.5}],
+          BaseStyle->"Graphics"]}, {
+         ArrowBox[BezierCurveBox[{{2.7847787322311683`, 0.2127540579711535}, {
+          2.9731453784579776`, 0.3062684497341703}, {3.163592833608206, 
+          0.22587596365402787`}, {3.225939603561719, 0.10033240490546544`}, {
+          2.990479627532483, -0.19338469189567498`}, {
+          2.854379624600906, -0.1598422699659035}, {2.734481886222877, 
+          0.00855522800594246}, {2.7847787322311683`, 0.2127540579711535}},
+          SplineDegree->7], 0.028680341448116264`], 
+         InsetBox["\<\"no button\"\>", {3.1748978609709755, -0.09998715356211008},
+           ImageScaled[{0.5, 0.5}],
+          BaseStyle->"Graphics"]}, {
+         ArrowBox[{{2.7847787322311683`, 0.2127540579711535}, {
+          1.833127343969471, 0.}}, 0.028680341448116264`], 
+         InsetBox["\<\"button\"\>", {2.3089530381003196, 0.10637702898557674},
+           ImageScaled[{0.5, 0.5}],
+          BaseStyle->"Graphics"]}, {
+         ArrowBox[{{1.833127343969471, 0.}, {1.0293588692688087`, 
+          0.6719535166981223}}, 0.028680341448116264`], 
+         InsetBox["\<\"until > ALARM_DURATION\"\>", {1.43124310661914, 0.33597675834906116},
+           ImageScaled[{0.5, 0.5}],
+          BaseStyle->"Graphics"]}, {
+         ArrowBox[BezierCurveBox[{{1.833127343969471, 0.}, {
+          1.997649173879195, -0.130994283694743}, {
+          2.005530404596904, -0.33756405687978175`}, {
+          1.9182334929322897`, -0.4472342628644089}, {
+          1.5524158006674895`, -0.35841675732054207`}, {
+          1.5251274739400238`, -0.2209262045857991}, {
+          1.6268544025994176`, -0.04096838459213867}, {1.833127343969471, 0.}},
+          SplineDegree->7], 0.028680341448116264`], 
+         InsetBox["\<\"until < ALARM_DURATION\"\>", {1.7151586991170553, -0.4858841413667301},
+           ImageScaled[{0.5, 0.5}],
+          BaseStyle->"Graphics"]}}, 
+       {Hue[0.6, 0.2, 0.8], EdgeForm[{GrayLevel[0], Opacity[
+        0.7]}], {DiskBox[{0., 0.6714425594784671}, 0.028680341448116264], 
+         InsetBox["\<\"begin\"\>", 
+          Offset[{2, 2}, {0.028680341448116264, 0.7001229009265834}], 
+          ImageScaled[{0, 0}],
+          BaseStyle->"Graphics"]}, {
+         DiskBox[{1.0293588692688087, 0.6719535166981223}, 
+          0.028680341448116264], 
+         InsetBox["\<\"look for alarm(0)\"\>", 
+          Offset[{2, 2}, {1.058039210716925, 0.7006338581462386}], 
+          ImageScaled[{0, 0}],
+          BaseStyle->"Graphics"]}, {
+         DiskBox[{1.8329122458619642, 1.3439945691114834}, 
+          0.028680341448116264], 
+         InsetBox["\<\"alarm(1)\"\>", 
+          Offset[{2, 2}, {1.8615925873100805, 1.3726749105595997}], 
+          ImageScaled[{0, 0}],
+          BaseStyle->"Graphics"]}, {
+         DiskBox[{2.78537445516035, 1.1302093220880365}, 
+          0.028680341448116264], 
+         InsetBox["\<\"no ambiance(2)\"\>", 
+          Offset[{2, 2}, {2.814054796608466, 1.1588896635361527}], 
+          ImageScaled[{0, 0}],
+          BaseStyle->"Graphics"]}, {
+         DiskBox[{2.7847787322311683, 0.2127540579711535}, 
+          0.028680341448116264], 
+         InsetBox["\<\"no noise(3)\"\>", 
+          Offset[{2, 2}, {2.813459073679285, 0.24143439941926975}], 
+          ImageScaled[{0, 0}],
+          BaseStyle->"Graphics"]}, {
+         DiskBox[{1.833127343969471, 0.}, 0.028680341448116264], 
+         InsetBox["\<\"no light&noise(4)\"\>", 
+          Offset[{2, 2}, {1.8618076854175873, 0.028680341448116264}], 
+          ImageScaled[{0, 0}],
+          BaseStyle->"Graphics"]}}}],
+     MouseAppearanceTag["NetworkGraphics"]],
+    AllowKernelInitialization->False]],
+  DefaultBaseStyle->{
+   "NetworkGraphics", FrontEnd`GraphicsHighlightColor -> Hue[0.8, 1., 0.6]},
+  FormatType->TraditionalForm,
+  FrameTicks->None,
+  ImageSize->{651., Automatic}]], "Output",
+ CellChangeTimes->{{3.726771615333604*^9, 3.7267716341990213`*^9}, 
+   3.726771667193124*^9, 3.726771713920539*^9, 3.726771806457892*^9, {
+   3.726773606637034*^9, 3.726773678758131*^9}, 3.726773770777782*^9, {
+   3.7267780380254993`*^9, 3.726778061440604*^9}, 3.726778255947404*^9, {
+   3.7267784198312798`*^9, 3.726778458878538*^9}, {3.726778517227818*^9, 
+   3.72677853261305*^9}, 3.726778584863964*^9, {3.726797479592868*^9, 
+   3.726797518513648*^9}, {3.726797588273917*^9, 3.726797607404626*^9}, {
+   3.7267977145647163`*^9, 
+   3.726797756827009*^9}},ExpressionUUID->"1194a73f-fc0e-4fd3-b596-\
+1e1b3c3ca748"]
+}, Open  ]]
+},
+WindowSize->{808, 911},
+WindowMargins->{{Automatic, -1891}, {Automatic, 64}},
+FrontEndVersion->"11.2 for Linux x86 (64-bit) (September 10, 2017)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 2795, 64, 285, "Input",ExpressionUUID->"2fa4a92a-e76c-4a88-a4f1-bf7f9229ae70"],
+Cell[3378, 88, 8866, 158, 520, "Output",ExpressionUUID->"1194a73f-fc0e-4fd3-b596-1e1b3c3ca748"]
+}, Open  ]]
+}
+]
+*)
+
