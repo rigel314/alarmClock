@@ -163,6 +163,9 @@ enum mode normmode(enum mode mode, enum but* butp)
 	}
 	
 	prevsubmode = submode;
+	prevr = r;
+	prevg = g;
+	prevb = b;
 	
 	return mode;
 }
