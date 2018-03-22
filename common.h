@@ -25,12 +25,15 @@
 #define ALARM_LED_DURATION (30*60) // 30min
 #define ALARM_BIRD_DURATION (15*60) // 15min
 #define ALARM_DURATION (ALARM_LED_DURATION)
+#define RED_MAX 255L
+#define GRN_MAX 127
+#define BLU_MAX 63
 
 // I2C address for DAC
 #define MCP4726_ADDR 0x62
 
 // Helper macros
-#define histequal(a, b, hist) (a > b-hist && a < b+hist) // Is a close enough to b?
+#define histequal(a, b, hist) (a >= b-hist && a <= b+hist) // Is a close enough to b?
 // #define min(x, y) ((x < y) ? x : y)
 // #define max(x, y) ((x > y) ? x : y)
 

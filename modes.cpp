@@ -80,21 +80,21 @@ enum mode normmode(enum mode mode, enum but* butp)
 		
 		if(until > ALARM_DURATION - ALARM_LED_DURATION)
 		{
-			r = 255L*ALARM_DURATION/(ALARM_LED_DURATION) - 255L*until/(ALARM_LED_DURATION);
-			if(r > 127)
+			r = RED_MAX*ALARM_DURATION/(ALARM_LED_DURATION) - RED_MAX*until/(ALARM_LED_DURATION);
+			if(r > GRN_MAX)
 			{
-				g = r - 127;
+				g = r - GRN_MAX;
 			}
-			if(g > 63)
+			if(g > BLU_MAX)
 			{
-				b = g - 63;
+				b = g - BLU_MAX;
 			}
 		}
 		else
 		{
-			r = 255;
-			g = 127;
-			b = 63;
+			r = RED_MAX;
+			g = GRN_MAX;
+			b = BLU_MAX;
 		}
 		
 		// log("rgb");
@@ -104,9 +104,9 @@ enum mode normmode(enum mode mode, enum but* butp)
 	}
 	else
 	{
-		r = 255;
-		g = 127;
-		b = 63;
+		r = RED_MAX;
+		g = GRN_MAX;
+		b = BLU_MAX;
 		if(submode == 4)
 		{
 			logobj("here");
@@ -119,7 +119,8 @@ enum mode normmode(enum mode mode, enum but* butp)
 		}
 	}
 	
-	if(r != prevr || g != prevg || b != prevb || submode != prevsubmode)
+	char h = 0;
+	if(!histequal(r, prevr, h) || !histequal(g, prevg, h) || !histequal(b, prevb, h) || submode != prevsubmode)
 		update = 1;
 	
 	if(update)
@@ -160,12 +161,12 @@ enum mode normmode(enum mode mode, enum but* butp)
 			default:
 				break;
 		}
+		prevr = r;
+		prevg = g;
+		prevb = b;
 	}
 	
 	prevsubmode = submode;
-	prevr = r;
-	prevg = g;
-	prevb = b;
 	
 	return mode;
 }
