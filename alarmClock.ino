@@ -13,8 +13,6 @@
 #include "modes.h"
 #include "util.h"
 
-volatile unsigned char gotTimer1 = 0;
-
 LCD lcd(SCRN_SCLK_PIN, SCRN_MOSI_PIN, SCRN_DC_PIN, SCRN_RST_PIN, SCRN_SCE_PIN);
 
 const char sound[] PROGMEM =
@@ -31,11 +29,33 @@ char cmdval = 0;
 
 struct alarm alarms[nALARMS] = {{0,0,0}};
 
+volatile unsigned char gotTimer1 = 0;
+volatile uint8_t secCtr = 0;
+volatile uint8_t longPressCtr = 0;
+volatile uint8_t realButPressed = 0;
+volatile uint8_t longPressDetected = 0;
+volatile uint8_t rptPressDetected = 0;
 // Called via timer interrupt
 void timer1inter()
 {
-	gotTimer1 = 1;
-	// logobj("inter");
+	if(realButPressed && longPressCtr < 25)
+		longPressCtr++;
+	else if (!realButPressed)
+		longPressCtr = 0;
+	if(longPressCtr == 25)
+	{
+		if(longPressDetected)
+			rptPressDetected = 1;
+		longPressDetected = 1;
+	}
+
+	secCtr++;
+	if(secCtr == 10)
+	{
+		gotTimer1 = 1;
+		secCtr = 0;
+		// logobj("inter");
+	}
 }
 
 void setup()
@@ -45,11 +65,11 @@ void setup()
 	// TWBR = ((F_CPU / 400000L) - 16) / 2; // Set I2C frequency to 400kHz
 	Wire.setClock(400000L);
 	
-	Timer1.initialize(1000000);
+	Timer1.initialize(100000); // (10Hz)
 	Timer1.attachInterrupt(timer1inter);
 	
 	lcd.initialize();
-	lcd.sendCommands("\x21\xAC\x20");
+	lcd.sendCommands("\x21\xAC\x20"); // Set contrast
 	
 	// set time sync to read from the RTC every 5min. (which is actually sync()'d in now() if it detects elapsed time >= 300s)
 	setSyncProvider(RTC.get);
@@ -94,8 +114,6 @@ void loop()
 	static int prev2Val = 0;
 	static char backlight = 0;
 	static enum mode mode = mode_NORMAL;
-	static char longPress = 0;
-	static int longCount = 0;
 	
 	enum but but, realbut;
 	
@@ -182,25 +200,21 @@ void loop()
 	realbut = but_NONE;
 	if(but == but_NONE && prevBut != but_NONE) // button released
 	{
-		if(longPress) // Also don't send one if longpress was sent
-			longPress = 0;
-		else
+		if(!longPressDetected) // Also don't send one if longpress was sent
 			realbut = prevBut;
-		longCount = 0;
+		realButPressed = 0;
+		longPressDetected = 0;
+		rptPressDetected = 0;
 	}
 	
-	if(longCount == 5000 && !longPress)
+	if(longPressDetected)
 	{
-		longPress = 1;
 		realbut = (enum but)(but + 5);
 	}
-	if(but != but_NONE)
+	if(rptPressDetected)
 	{
-		if(longPress && longCount % 200 == 1)
-		{
-			realbut = (enum but)(but + 10); // Unless a repeat should be sent
-		}
-		longCount++;
+		realbut = (enum but)(but + 10); // Unless a repeat should be sent
+		rptPressDetected = 0;
 	}
 	
 	// handle buttons globally
