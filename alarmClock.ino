@@ -7,10 +7,11 @@
 #include <DS1307RTC.h>
 #include <Wire.h>
 #include <avr/pgmspace.h>
-// #include <EEPROM.h>
+#include <EEPROM.h>
 
 #include "common.h"
 #include "modes.h"
+#include "util.h"
 
 volatile unsigned char gotTimer1 = 0;
 
@@ -73,8 +74,17 @@ void setup()
 	pinMode(GRN_PIN, OUTPUT);
 	pinMode(BLU_PIN, OUTPUT);
 	
-	// get saved settings
-	// TODO: read alarm time and other settings(backlight intensity?) from EEPROM/RTCram
+	// read alarm time and other settings(backlight intensity?) from EEPROM/RTCram
+	struct alarmStor tmpAlrm;
+	for (int i = 0; i < nALARMS; i++)
+	{
+		int addr = CONFIG_ALARMS_ADDR + i*sizeof(struct alarmStor);
+		EEPROM.get(addr, tmpAlrm);
+		unsigned long crcCalc = crc32((char*)&tmpAlrm, sizeof(struct alarmStor) - sizeof(unsigned long));
+		if(tmpAlrm.structVer != ALARMSTOR_STRUCTVER || tmpAlrm.crc32 != crcCalc)
+			break;
+		alarms[i] = tmpAlrm.val;
+	}
 }
 
 void loop()

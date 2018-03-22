@@ -37,15 +37,27 @@
 // #define min(x, y) ((x < y) ? x : y)
 // #define max(x, y) ((x > y) ? x : y)
 
+// Config Addresses
+#define CONFIG_ALARMS_ADDR 128
+
 // types
 enum mode {mode_INVALID, mode_NORMAL, mode_SETTIME, mode_SETALARM, mode_DEMO, mode_NMODES};
 enum but {but_NONE, but_LEFT, but_RIGHT, but_UP, but_DOWN, but_SELECT, but_LEFT_LONG, but_RIGHT_LONG, but_UP_LONG, but_DOWN_LONG, but_SELECT_LONG, but_LEFT_RPT, but_RIGHT_RPT, but_UP_RPT, but_DOWN_RPT, but_SELECT_RPT};
+#pragma pack(push, 1)
 struct alarm
 {
 	uint8_t hour;
 	uint8_t min;
 	uint8_t enDayEn; // bit 7 is "alarm in use", bits 6-0 are a weekday bit field for sunday-saturday
 };
+#define ALARMSTOR_STRUCTVER 1
+struct alarmStor
+{
+	uint8_t structVer;
+	struct alarm val;
+	unsigned long crc32;
+};
+#pragma pack(pop)
 
 // sounds
 extern const char sound[16000];

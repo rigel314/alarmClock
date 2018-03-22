@@ -2,8 +2,10 @@
 #include <Wire.h>
 #include <TimeLib.h>
 #include <DS1307RTC.h>
+#include <EEPROM.h>
 
 #include "modes.h"
+#include "util.h"
 
 static const char* fields[] = {"year", "month", "day", "hour", "minute", "second"};
 static const uint8_t min[] = {0, 1, 1, 0, 0, 0};
@@ -521,7 +523,13 @@ enum mode salrmmode(enum mode mode, enum but* butp)
 				logobj((int)alarms[alarmChoice].hour);
 				logobj((int)alarms[alarmChoice].min);
 				logobj((int)alarms[alarmChoice].enDayEn, HEX);
-				// TODO: write alarms to EEPROM/RTCram
+				// write alarms to EEPROM/RTCram
+				int addr = CONFIG_ALARMS_ADDR + alarmChoice*sizeof(struct alarmStor);
+				struct alarmStor tmpAlrm;
+				tmpAlrm.structVer = ALARMSTOR_STRUCTVER;
+				tmpAlrm.val = alrm;
+				tmpAlrm.crc32 = crc32((char*)&tmpAlrm, sizeof(struct alarmStor) - sizeof(unsigned long));
+				EEPROM.put(addr, tmpAlrm);
 			}
 			lcd.sendString(4, 0, (char*)emptyLine);
 			lcd.sendString(3, 0, (char*)emptyLine);
