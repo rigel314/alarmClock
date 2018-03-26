@@ -181,7 +181,7 @@ enum mode normmode(enum mode mode, enum but* butp)
 			if(r == RED_MAX && g == GRN_MAX && b == BLU_MAX)
 			{
 				alarmNoiseCount++;
-				if(alarmNoiseCount > 5)
+				if((alarmNoiseState && alarmNoiseCount > 5) || (!alarmNoiseState && alarmNoiseCount > 120))
 				{
 					alarmNoiseCount = 0;
 					alarmNoiseState = !alarmNoiseState;
