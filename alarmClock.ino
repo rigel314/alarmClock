@@ -18,6 +18,8 @@ LCD lcd(SCRN_SCLK_PIN, SCRN_MOSI_PIN, SCRN_DC_PIN, SCRN_RST_PIN, SCRN_SCE_PIN);
 const char sound[] PROGMEM =
 #include "bird.h" // This has the data and a semicolon
 
+const struct soundInfo birdSounds[] = {{2304, bird1}, {1504, bird2}, {1088, bird3}, {800, bird4}, {800, bird5}, {1024, bird6}};
+
 const char lookup[] = "0123456789ABCDEF";
 const char* emptyLine = "              ";
 
@@ -38,11 +40,11 @@ volatile uint8_t rptPressDetected = 0;
 // Called via timer interrupt
 void timer1inter()
 {
-	if(realButPressed && longPressCtr < 25)
+	if(realButPressed && longPressCtr < 15)
 		longPressCtr++;
 	else if (!realButPressed)
 		longPressCtr = 0;
-	if(longPressCtr == 25)
+	if(longPressCtr == 15)
 	{
 		if(longPressDetected)
 			rptPressDetected = 1;
@@ -105,6 +107,8 @@ void setup()
 			break;
 		alarms[i] = tmpAlrm.val;
 	}
+	
+	randomSeed(analogRead(2));
 }
 
 void loop()
@@ -114,6 +118,7 @@ void loop()
 	static int prev2Val = 0;
 	static char backlight = 0;
 	static enum mode mode = mode_NORMAL;
+	static char longFlag = 0;
 	
 	enum but but, realbut;
 	
@@ -196,20 +201,27 @@ void loop()
 		but = prevBut;
 	}
 	
+	if(but != but_NONE)
+		realButPressed = 1;
+	else
+		realButPressed = 0;
+	
 	// Don't send a button event unless a button has been released
 	realbut = but_NONE;
 	if(but == but_NONE && prevBut != but_NONE) // button released
 	{
-		if(!longPressDetected) // Also don't send one if longpress was sent
+		if(!longFlag) // Also don't send one if longpress was sent
 			realbut = prevBut;
 		realButPressed = 0;
 		longPressDetected = 0;
 		rptPressDetected = 0;
+		longFlag = 0;
 	}
 	
-	if(longPressDetected)
+	if(longPressDetected && !longFlag)
 	{
 		realbut = (enum but)(but + 5);
+		longFlag = 1;
 	}
 	if(rptPressDetected)
 	{

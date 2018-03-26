@@ -21,7 +21,7 @@
 #define SCRN_LED_PIN 6 // PWM
 
 // Settings
-#define nALARMS 1
+#define nALARMS 3
 #define ALARM_LED_DURATION (30*60) // 30min
 #define ALARM_BIRD_DURATION (15*60) // 15min
 #define ALARM_DURATION (ALARM_LED_DURATION)
@@ -58,9 +58,23 @@ struct alarmStor
 	unsigned long crc32;
 };
 #pragma pack(pop)
+struct soundInfo
+{
+	int len;
+	const char* sound;
+};
 
 // sounds
 extern const char sound[16000];
+extern const char alarmSound[2];
+#define nBirdSounds 6
+extern const char bird1[];
+extern const char bird2[];
+extern const char bird3[];
+extern const char bird4[];
+extern const char bird5[];
+extern const char bird6[];
+extern const struct soundInfo birdSounds[nBirdSounds];
 
 // externs
 extern LCD lcd;

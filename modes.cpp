@@ -6,6 +6,7 @@
 
 #include "modes.h"
 #include "util.h"
+#include "sounds.h"
 
 static const char* fields[] = {"year", "month", "day", "hour", "minute", "second"};
 static const uint8_t min[] = {0, 1, 1, 0, 0, 0};
@@ -46,6 +47,11 @@ enum mode normmode(enum mode mode, enum but* butp)
 	static char prevsubmode = -1;
 	static char alarmWaiting = 0;
 	static uint8_t prevr = 0, prevg = 0, prevb = 0;
+	static char alarmNoiseCount = 0;
+	static char alarmNoiseState = 0;
+	static int ambianceCount = 0;
+	static char ambianceState = 0;
+	static int ambianceNextMax = random(1000, 5000);
 	
 	char update = 0;
 	enum but but = *butp;
@@ -111,7 +117,6 @@ enum mode normmode(enum mode mode, enum but* butp)
 		b = BLU_MAX;
 		if(submode == 4)
 		{
-			logobj("here");
 			submode = 0;
 			alarmWaiting = 0;
 		}
@@ -166,6 +171,91 @@ enum mode normmode(enum mode mode, enum but* butp)
 		prevr = r;
 		prevg = g;
 		prevb = b;
+	}
+	
+	switch(submode)
+	{
+		case 1:
+		case 2:
+			// Alarm noise
+			if(r == RED_MAX && g == GRN_MAX && b == BLU_MAX)
+			{
+				alarmNoiseCount++;
+				if(alarmNoiseCount > 5)
+				{
+					alarmNoiseCount = 0;
+					alarmNoiseState = !alarmNoiseState;
+				}
+				if(alarmNoiseState)
+				{
+					const char* ptr = alarmSound;
+					for(int j = 0; j < 8; j++)
+					{
+						for(int i = 0; i < 20; i++)
+						{
+							Wire.beginTransmission(MCP4726_ADDR);
+							int16_t val = (int8_t)pgm_read_byte(ptr);
+							val += 128;
+							val <<= 3;
+							Wire.write(val >> 8);
+							Wire.write(val & 0xFF);
+							Wire.endTransmission(true);
+							delayMicroseconds(15);
+						}
+						ptr++;
+						for(int i = 0; i < 20; i++)
+						{
+							Wire.beginTransmission(MCP4726_ADDR);
+							int16_t val = (int8_t)pgm_read_byte(ptr);
+							val += 128;
+							val <<= 3;
+							Wire.write(val >> 8);
+							Wire.write(val & 0xFF);
+							Wire.endTransmission(true);
+							delayMicroseconds(15);
+						}
+						ptr--;
+					}
+				}
+			}
+			else
+			{ // Ambiance
+				if(submode == 1)
+				{
+					ambianceCount++;
+					if(ambianceCount == ambianceNextMax)
+					{
+						ambianceCount = 0;
+						ambianceState = 1;
+						ambianceNextMax = random(1000, 5000);
+						logobj(ambianceNextMax);
+					}
+					if(ambianceState)
+					{
+						struct soundInfo info = birdSounds[(int)random(nBirdSounds)];
+						const char* ptr = info.sound;
+						int maxval = info.len;
+						for(int i = 0; i < maxval; i++)
+						{
+							Wire.beginTransmission(MCP4726_ADDR);
+							int16_t val = (int8_t)pgm_read_byte(ptr++);
+							val += 128;
+							val <<= 3;
+							// logobj(val);
+							Wire.write(val >> 8); // & 0x07);
+							Wire.write(val & 0xFF);
+							Wire.endTransmission(true);
+							delayMicroseconds(15);
+						}
+						ambianceState = 0;
+					}
+				}
+			}
+			break;
+		default:
+			alarmNoiseState = 0;
+			ambianceState = 0;
+			break;
 	}
 	
 	prevsubmode = submode;
@@ -320,17 +410,17 @@ enum mode salrmmode(enum mode mode, enum but* butp)
 		*butp = but_NONE;
 		entry = 1;
 		alarmChoice = 0;
-		alrm = alarms[alarmChoice];
 		if(nALARMS == 1) // Maybe make this an #if
 		{
+			alrm = alarms[0];
 			entry++;
 			val = alrm.hour;
 			len = snprintf(str, 19, "set: %s%02d%s:%02d", LCD::reverseVideoOn, (int)alrm.hour, LCD::reverseVideoOff, (int)alrm.min);
 		}
 		else
 		{
-			val = alarmChoice;
-			len = snprintf(str, 19, "alarm: %d", (int)alarmChoice+1);
+			val = alarmChoice+1;
+			len = snprintf(str, 19, "alarm: %s%d%s", LCD::reverseVideoOn, (int)alarmChoice+1, LCD::reverseVideoOff);
 		}
 		for(int i = len; i < 18; i++)
 			str[i] = ' ';
@@ -392,7 +482,8 @@ enum mode salrmmode(enum mode mode, enum but* butp)
 			switch(entry)
 			{
 				case 1:
-					alarmChoice = val;
+					alarmChoice = val-1;
+					alrm = alarms[alarmChoice];
 					break;
 				case 2:
 					alrm.hour = val;
@@ -432,7 +523,7 @@ enum mode salrmmode(enum mode mode, enum but* butp)
 		{
 			case 1:
 				if(entrychanged)
-					val = alarmChoice;
+					val = alarmChoice+1;
 				if(val < 1)
 					val = nALARMS;
 				if(val > nALARMS)
